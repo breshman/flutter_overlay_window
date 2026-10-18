@@ -16,28 +16,30 @@ class _DragToDismissOverlayState extends State<DragToDismissOverlay> {
     return Material(
       color: Colors.transparent,
       child: Center(
-        child: Container(
-          width: 220,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.white24, width: 1.5),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF4A00E0).withValues(alpha: 0.4),
-                blurRadius: 18,
-                offset: const Offset(0, 6),
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: Container(
+            width: 220,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Colors.white24, width: 1.5),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF4A00E0).withValues(alpha: 0.4),
+                  blurRadius: 18,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -126,6 +128,7 @@ class _DragToDismissOverlayState extends State<DragToDismissOverlay> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

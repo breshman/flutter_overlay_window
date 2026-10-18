@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage> {
       designId: "drag_to_dismiss",
       name: "Drag to Dismiss Test",
       width: 240,
-      height: 100,
+      height: 120,
       enableDrag: true,
       enableDismiss: _dismissEnabled,
       dismissIconColor: iconColor,
@@ -195,7 +195,8 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 10),
           _buildDesignCard(
             title: "Messenger Chat Head",
-            subtitle: "Expandable floating bubble with unread badge & chat card",
+            subtitle:
+                "Expandable floating bubble with unread badge & chat card",
             badge: "Drag-to-Dismiss Ready",
             icon: Icons.chat_bubble_rounded,
             color: const Color(0xFF0072FF),
@@ -213,7 +214,8 @@ class _HomePageState extends State<HomePage> {
           ),
           _buildDesignCard(
             title: "Dynamic Island Capsule",
-            subtitle: "Live activity style media player with progress bar & controls",
+            subtitle:
+                "Live activity style media player with progress bar & controls",
             badge: "Compact Pill",
             icon: Icons.play_circle_fill_rounded,
             color: const Color(0xFFE94057),
@@ -228,7 +230,8 @@ class _HomePageState extends State<HomePage> {
           ),
           _buildDesignCard(
             title: "Quick Note Pad",
-            subtitle: "Floating sticky note with soft keyboard support & color tags",
+            subtitle:
+                "Floating sticky note with soft keyboard support & color tags",
             badge: "Keyboard Focusable",
             icon: Icons.edit_note_rounded,
             color: const Color(0xFFF59E0B),
@@ -243,7 +246,8 @@ class _HomePageState extends State<HomePage> {
           ),
           _buildDesignCard(
             title: "VIP Incoming Call HUD",
-            subtitle: "Frosted glass caller banner with priority tag & quick response buttons",
+            subtitle:
+                "Frosted glass caller banner with priority tag & quick response buttons",
             badge: "Interactive Card",
             icon: Icons.phone_in_talk_rounded,
             color: const Color(0xFF10B981),
@@ -294,7 +298,9 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
-                _isOverlayActive ? Icons.layers_rounded : Icons.layers_clear_rounded,
+                _isOverlayActive
+                    ? Icons.layers_rounded
+                    : Icons.layers_clear_rounded,
                 color: _isOverlayActive ? Colors.green : Colors.grey,
                 size: 28,
               ),
@@ -305,8 +311,11 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _isOverlayActive ? "Active: $_activeDesignName" : "No Active Overlay",
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    _isOverlayActive
+                        ? "Active: $_activeDesignName"
+                        : "No Active Overlay",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   const SizedBox(height: 2),
                   Text(
@@ -375,7 +384,8 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Text(
                         "Drag-to-Dismiss Zone",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
                       ),
                       Text(
                         "Shows a dismiss target at bottom-center during drag",
@@ -425,7 +435,9 @@ class _HomePageState extends State<HomePage> {
                   label: const Text("Custom Icon (ic_launcher)"),
                   selected: _dismissPreset == "custom_icon",
                   onSelected: (selected) {
-                    if (selected) setState(() => _dismissPreset = "custom_icon");
+                    if (selected) {
+                      setState(() => _dismissPreset = "custom_icon");
+                    }
                   },
                 ),
               ],
@@ -491,16 +503,20 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                        Flexible(
+                          child: Text(
+                            title,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: color.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(6),

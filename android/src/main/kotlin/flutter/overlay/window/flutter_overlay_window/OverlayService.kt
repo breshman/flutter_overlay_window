@@ -25,10 +25,13 @@ import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.WindowManager
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
@@ -80,6 +83,7 @@ class OverlayService : Service(), View.OnTouchListener {
     private var lastYPosition = 0
     private var dragging = false
     private var dragSlopSquared = 576
+    private var isCurrentlyHoveringDismiss = false
 
     private val szWindow = Point()
     private var mTrayAnimationTimer: Timer? = null
@@ -292,8 +296,17 @@ class OverlayService : Service(), View.OnTouchListener {
         }
 
         val params = WindowManager.LayoutParams(
-            if (windowSetup.width == -1999) -1 else windowSetup.width,
-            if (windowSetup.height != -1999) windowSetup.height else screenHeight(),
+            when (windowSetup.width) {
+                -1999, -1 -> WindowManager.LayoutParams.MATCH_PARENT
+                -2 -> WindowManager.LayoutParams.WRAP_CONTENT
+                else -> dpToPx(windowSetup.width)
+            },
+            when (windowSetup.height) {
+                -1999 -> screenHeight()
+                -1 -> WindowManager.LayoutParams.MATCH_PARENT
+                -2 -> WindowManager.LayoutParams.WRAP_CONTENT
+                else -> dpToPx(windowSetup.height)
+            },
             0,
             -statusBarHeightPx(),
             layoutType,
@@ -452,25 +465,25 @@ class OverlayService : Service(), View.OnTouchListener {
 
         if ((windowSetup.gravity and Gravity.RIGHT) == Gravity.RIGHT) {
             val maxLeftOffset = rightBound - minVisibleWidth
-            params.x = max(maxLeftOffset, params.x)
+            params.x = max(minVisibleWidth - overlayWidth, min(params.x, maxLeftOffset))
         } else if ((windowSetup.gravity and Gravity.LEFT) == Gravity.LEFT) {
-            val maxRightOffset = leftBound + overlayWidth - minVisibleWidth
-            params.x = min(maxRightOffset, params.x)
+            val maxRightOffset = rightBound - minVisibleWidth
+            params.x = max(minVisibleWidth - overlayWidth, min(params.x, maxRightOffset))
         } else {
-            val maxLeftOffset = leftBound - (szWindow.x / 2) + minVisibleWidth
-            val maxRightOffset = rightBound - (szWindow.x / 2) - (overlayWidth - minVisibleWidth)
+            val maxLeftOffset = leftBound - (szWindow.x / 2) - (overlayWidth / 2) + minVisibleWidth
+            val maxRightOffset = rightBound - (szWindow.x / 2) + (overlayWidth / 2) - minVisibleWidth
             params.x = max(maxLeftOffset, min(params.x, maxRightOffset))
         }
 
         if ((windowSetup.gravity and Gravity.BOTTOM) == Gravity.BOTTOM) {
             val maxTopOffset = bottomBound - minVisibleHeight
-            params.y = max(maxTopOffset, params.y)
+            params.y = max(minVisibleHeight - overlayHeight, min(params.y, maxTopOffset))
         } else if ((windowSetup.gravity and Gravity.TOP) == Gravity.TOP) {
-            val maxBottomOffset = topBound + overlayHeight - minVisibleHeight
-            params.y = min(maxBottomOffset, params.y)
+            val maxBottomOffset = bottomBound - minVisibleHeight
+            params.y = max(minVisibleHeight - overlayHeight, min(params.y, maxBottomOffset))
         } else {
-            val maxTopOffset = topBound - (szWindow.y / 2) + minVisibleHeight
-            val maxBottomOffset = bottomBound - (szWindow.y / 2) - (overlayHeight - minVisibleHeight)
+            val maxTopOffset = topBound - (szWindow.y / 2) - (overlayHeight / 2) + minVisibleHeight
+            val maxBottomOffset = bottomBound - (szWindow.y / 2) + (overlayHeight / 2) - minVisibleHeight
             params.y = max(maxTopOffset, min(params.y, maxBottomOffset))
         }
     }
@@ -676,22 +689,71 @@ class OverlayService : Service(), View.OnTouchListener {
             y = dpToPx(DISMISS_BOTTOM_MARGIN_DP)
         }
 
+        iv.scaleX = 0f
+        iv.scaleY = 0f
+        iv.alpha = 0f
         try {
             windowManager?.addView(iv, dismissParams)
             dismissView = iv
+            iv.animate()
+                .scaleX(1.0f)
+                .scaleY(1.0f)
+                .alpha(0.85f)
+                .setDuration(220)
+                .setInterpolator(OvershootInterpolator(1.4f))
+                .start()
         } catch (e: Exception) {
             Log.e("OverlayService", "Error displaying dismiss view", e)
         }
     }
 
+    private fun updateDismissZoneVisuals(isOver: Boolean) {
+        val view = dismissView ?: return
+        if (isOver) {
+            view.animate()
+                .scaleX(1.42f)
+                .scaleY(1.42f)
+                .alpha(1.0f)
+                .setDuration(160)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+            (view.drawable as? DismissDrawable)?.isHovered = true
+            try {
+                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+            } catch (_: Exception) {}
+        } else {
+            view.animate()
+                .scaleX(1.0f)
+                .scaleY(1.0f)
+                .alpha(0.85f)
+                .setDuration(160)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+            (view.drawable as? DismissDrawable)?.isHovered = false
+        }
+    }
+
     private fun removeDismissView() {
         val view = dismissView ?: return
-        try {
-            windowManager?.removeView(view)
-        } catch (e: Exception) {
-            Log.e("OverlayService", "Error removing dismiss view", e)
-        }
         dismissView = null
+        isCurrentlyHoveringDismiss = false
+        try {
+            view.animate()
+                .scaleX(0f)
+                .scaleY(0f)
+                .alpha(0f)
+                .setDuration(150)
+                .withEndAction {
+                    try {
+                        windowManager?.removeView(view)
+                    } catch (_: Exception) {}
+                }
+                .start()
+        } catch (_: Exception) {
+            try {
+                windowManager?.removeView(view)
+            } catch (_: Exception) {}
+        }
     }
 
     private fun isOverDismissZone(event: MotionEvent): Boolean {
@@ -719,6 +781,7 @@ class OverlayService : Service(), View.OnTouchListener {
                 mTrayTimerTask = null
 
                 dragging = false
+                isCurrentlyHoveringDismiss = false
                 lastX = event.rawX
                 lastY = event.rawY
                 return false
@@ -735,6 +798,11 @@ class OverlayService : Service(), View.OnTouchListener {
                 dragging = true
                 if (windowSetup.enableDismiss) {
                     createDismissView()
+                    val isOver = isOverDismissZone(event)
+                    if (isOver != isCurrentlyHoveringDismiss) {
+                        isCurrentlyHoveringDismiss = isOver
+                        updateDismissZoneVisuals(isOver)
+                    }
                 }
                 return true
             }
@@ -763,9 +831,25 @@ class OverlayService : Service(), View.OnTouchListener {
 
     private class DismissDrawable(
         private val size: Int,
-        backgroundColor: Int,
+        private val backgroundColor: Int,
         iconColor: Int
     ) : Drawable() {
+        var isHovered: Boolean = false
+            set(value) {
+                if (field != value) {
+                    field = value
+                    circlePaint.color = if (value) 0xFFFF1744.toInt() else backgroundColor
+                    ringPaint.color = if (value) 0x66FF1744 else Color.TRANSPARENT
+                    invalidateSelf()
+                }
+            }
+
+        private val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.TRANSPARENT
+            style = Paint.Style.STROKE
+            strokeWidth = size / 10f
+        }
+
         private val circlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = backgroundColor
             style = Paint.Style.FILL
@@ -780,9 +864,12 @@ class OverlayService : Service(), View.OnTouchListener {
         override fun draw(canvas: Canvas) {
             val cx = size / 2f
             val cy = size / 2f
-            val radius = size / 2f
+            val radius = size / 2.3f
+            if (isHovered) {
+                canvas.drawCircle(cx, cy, (size / 2f) - (ringPaint.strokeWidth / 2f), ringPaint)
+            }
             canvas.drawCircle(cx, cy, radius, circlePaint)
-            val arm = size / 4.8f
+            val arm = radius / 2.2f
             canvas.drawLine(cx - arm, cy - arm, cx + arm, cy + arm, xPaint)
             canvas.drawLine(cx + arm, cy - arm, cx - arm, cy + arm, xPaint)
         }
@@ -790,11 +877,13 @@ class OverlayService : Service(), View.OnTouchListener {
         override fun setAlpha(alpha: Int) {
             circlePaint.alpha = alpha
             xPaint.alpha = alpha
+            ringPaint.alpha = alpha
         }
 
         override fun setColorFilter(colorFilter: ColorFilter?) {
             circlePaint.colorFilter = colorFilter
             xPaint.colorFilter = colorFilter
+            ringPaint.colorFilter = colorFilter
         }
 
         @Deprecated("Deprecated in Java")

@@ -1,16 +1,16 @@
-# Graph Report - flutter_overlay_window  (2026-10-17)
+# Graph Report - flutter_overlay_window  (2026-10-18)
 
 ## Corpus Check
-- 67 files · ~23,565 words
+- 67 files · ~23,805 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 525 nodes · 617 edges · 50 communities (38 shown, 12 thin omitted)
+- 526 nodes · 620 edges · 51 communities (39 shown, 12 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `73664a63`
+- Built from commit: `d33a6815`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -59,9 +59,10 @@
 - official-links.md
 - run_examples.sh
 - messanger_chathead.dart
+- package:flutter/material.dart
 
 ## God Nodes (most connected - your core abstractions)
-1. `OverlayService` - 41 edges
+1. `OverlayService` - 42 edges
 2. `FlutterOverlayWindowPlugin` - 21 edges
 3. `WindowSetupTest` - 10 edges
 4. `DismissDrawable` - 9 edges
@@ -79,7 +80,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (50 total, 12 thin omitted)
+## Communities (51 total, 12 thin omitted)
 
 ### Community 0 - "Android Overlay Service"
 Cohesion: 0.08
@@ -113,8 +114,8 @@ Nodes (12): center,
   bottomCenter,, bottomRight, fullCover, matchParent, NotificationVisibility, OverlayAlignment, OverlayFlag, PositionGravity (+4 more)
 
 ### Community 7 - "Example Entry Point & App Lifecycle"
-Cohesion: 0.14
-Nodes (14): _activeDesign, build, _buildSelectedOverlay, createState, dispose, initState, OverlayDispatcher, _OverlayDispatcherState (+6 more)
+Cohesion: 0.15
+Nodes (12): _activeDesign, build, _buildSelectedOverlay, createState, dispose, initState, _overlaySubscription, package:flutter_overlay_window_example/overlays/drag_to_dismiss_overlay.dart (+4 more)
 
 ### Community 8 - "Overlay Position Models"
 Cohesion: 0.22
@@ -145,8 +146,8 @@ Cohesion: 0.20
 Nodes (4): DismissDrawable, Canvas, ColorFilter, Drawable
 
 ### Community 25 - "dynamic_island_overlay.dart"
-Cohesion: 0.15
-Nodes (14): HomePage, _HomePageState, build, _buildCollapsedPill, _buildExpandedView, createState, DynamicIslandOverlay, _DynamicIslandOverlayState (+6 more)
+Cohesion: 0.20
+Nodes (10): build, _buildCollapsedPill, _buildExpandedView, createState, DynamicIslandOverlay, _DynamicIslandOverlayState, _isExpanded, _isPlaying (+2 more)
 
 ### Community 27 - "flutter_overlay_window_test.dart"
 Cohesion: 0.20
@@ -173,8 +174,8 @@ Cohesion: 0.14
 Nodes (13): Common Skill Categories, Find Skills, How to Help Users Find Skills, Step 1: Understand What They Need, Step 2: Check the Leaderboard First, Step 3: Search for Skills, Step 4: Verify Quality Before Recommending, Step 5: Present Options to the User (+5 more)
 
 ### Community 35 - "package:flutter/material.dart"
-Cohesion: 0.40
-Nodes (5): build, createState, TrueCallerOverlay, _TrueCallerOverlayState, package:flutter/material.dart
+Cohesion: 0.32
+Nodes (8): HomePage, _HomePageState, MessangerChatHead, _MessangerChatHeadState, OverlayDispatcher, _OverlayDispatcherState, State, StatefulWidget
 
 ### Community 36 - "Android Kotlin Core"
 Cohesion: 0.17
@@ -209,8 +210,12 @@ Cohesion: 0.40
 Nodes (4): Android Testing Unit Runnable Scenarios, Edge case, Failure recovery, Happy path
 
 ### Community 49 - "messanger_chathead.dart"
-Cohesion: 0.13
-Nodes (15): build, _buildAvatarBubble, _buildExpandedChat, createState, dispose, initState, _isExpanded, _messages (+7 more)
+Cohesion: 0.14
+Nodes (13): build, _buildAvatarBubble, _buildExpandedChat, createState, dispose, initState, _isExpanded, _messages (+5 more)
+
+### Community 50 - "package:flutter/material.dart"
+Cohesion: 0.40
+Nodes (5): build, createState, TrueCallerOverlay, _TrueCallerOverlayState, package:flutter/material.dart
 
 ## Knowledge Gaps
 - **261 isolated node(s):** `run_examples.sh script`, `run_examples.sh script`, `run_all_tests.sh script`, `OverlayConstants`, `_isOverlayActive` (+256 more)
@@ -225,7 +230,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `run_examples.sh script`, `run_examples.sh script`, `run_all_tests.sh script` to the rest of the system?**
   _261 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Android Overlay Service` be split into smaller, more focused modules?**
-  _Cohesion score 0.08176100628930817 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08080808080808081 - nodes in this community are weakly interconnected._
 - **Should `Android Plugin Lifecycle & Activity` be split into smaller, more focused modules?**
   _Cohesion score 0.14130434782608695 - nodes in this community are weakly interconnected._
 - **Should `MethodChannel & Notifications Handler` be split into smaller, more focused modules?**

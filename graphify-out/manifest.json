@@ -50,8 +50,8 @@
     "semantic_hash": "dd2373bc97186a11d61a35a86fd53ea7"
   },
   "example/lib/home_page.dart": {
-    "mtime": 1792299326.3461595,
-    "ast_hash": "74c8d723723801d331808819558f2b5c",
+    "mtime": 1792300422.4768512,
+    "ast_hash": "dbbb10c8b9ff0b6aa54809855d72822e",
     "semantic_hash": ""
   },
   "example/lib/main.dart": {
@@ -175,8 +175,8 @@
     "semantic_hash": ""
   },
   "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/OverlayService.kt": {
-    "mtime": 1792297457.696329,
-    "ast_hash": "1e4892a7419d89f14c5642d801318ecb",
+    "mtime": 1792301360.685374,
+    "ast_hash": "1d95fe996ab4068468105ee7b352056e",
     "semantic_hash": ""
   },
   "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/WindowSetup.kt": {
@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "example/lib/overlays/drag_to_dismiss_overlay.dart": {
-    "mtime": 1792297587.930253,
-    "ast_hash": "ca9bbb9065cddc978a9332f2e1b63bbc",
+    "mtime": 1792300379.7821965,
+    "ast_hash": "a30b7a0fbd9340b2b16de517f98d5995",
     "semantic_hash": ""
   },
   "android/src/test/kotlin/flutter/overlay/window/flutter_overlay_window/OverlayConstantsTest.kt": {
