@@ -1,16 +1,16 @@
 # Graph Report - flutter_overlay_window  (2026-10-18)
 
 ## Corpus Check
-- 67 files · ~23,805 words
+- 67 files · ~24,025 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 526 nodes · 620 edges · 51 communities (39 shown, 12 thin omitted)
+- 527 nodes · 625 edges · 50 communities (38 shown, 12 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d33a6815`
+- Built from commit: `e6db601e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -49,7 +49,6 @@
 - Android Kotlin Core
 - Android Testing Unit
 - State
-- text_field_overlay.dart
 - Android Kotlin Core Patterns
 - Android Kotlin Core Runnable Scenarios
 - Android Testing Unit Patterns
@@ -62,7 +61,7 @@
 - package:flutter/material.dart
 
 ## God Nodes (most connected - your core abstractions)
-1. `OverlayService` - 42 edges
+1. `OverlayService` - 43 edges
 2. `FlutterOverlayWindowPlugin` - 21 edges
 3. `WindowSetupTest` - 10 edges
 4. `DismissDrawable` - 9 edges
@@ -80,11 +79,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (51 total, 12 thin omitted)
+## Communities (50 total, 12 thin omitted)
 
 ### Community 0 - "Android Overlay Service"
 Cohesion: 0.08
-Nodes (21): getCurrentPosition(), BasicMessageChannel, Intent, MethodChannel, moveOverlay(), OverlayService, TrayAnimationTimerTask, updateNotification() (+13 more)
+Nodes (22): getCurrentPosition(), BasicMessageChannel, Intent, MethodChannel, moveOverlay(), OverlayService, TrayAnimationTimerTask, updateNotification() (+14 more)
 
 ### Community 1 - "Android Plugin Lifecycle & Activity"
 Cohesion: 0.14
@@ -99,8 +98,8 @@ Cohesion: 0.08
 Nodes (25): flutter_overlay_window, _channel, closeOverlay, _controller, disposeOverlayListener, FlutterOverlayWindow, getOverlayPosition, isActive (+17 more)
 
 ### Community 4 - "Example Home Page & Isolate Port"
-Cohesion: 0.09
-Nodes (21): _activeDesignName, _activityLogs, build, _buildControlsSection, _buildDesignCard, _buildDismissTestingCard, _buildLogsView, _buildStatusHeader (+13 more)
+Cohesion: 0.05
+Nodes (41): dart:async, dart:developer, _activeDesignName, _activityLogs, build, _buildControlsSection, _buildDesignCard, _buildDismissTestingCard (+33 more)
 
 ### Community 5 - "Example Messenger Chathead Overlay"
 Cohesion: 0.12
@@ -114,8 +113,8 @@ Nodes (12): center,
   bottomCenter,, bottomRight, fullCover, matchParent, NotificationVisibility, OverlayAlignment, OverlayFlag, PositionGravity (+4 more)
 
 ### Community 7 - "Example Entry Point & App Lifecycle"
-Cohesion: 0.15
-Nodes (12): _activeDesign, build, _buildSelectedOverlay, createState, dispose, initState, _overlaySubscription, package:flutter_overlay_window_example/overlays/drag_to_dismiss_overlay.dart (+4 more)
+Cohesion: 0.20
+Nodes (10): Color, build, _controller, createState, dispose, _noteColors, QuickNoteOverlay, _QuickNoteOverlayState (+2 more)
 
 ### Community 8 - "Overlay Position Models"
 Cohesion: 0.22
@@ -138,8 +137,8 @@ Cohesion: 0.22
 Nodes (8): @pragma, build, main, MyApp, overlayMain, package:flutter_overlay_window_example/home_page.dart, package:flutter_overlay_window_example/overlays/overlay_dispatcher.dart, StatelessWidget
 
 ### Community 23 - "overlay_dispatcher.dart"
-Cohesion: 0.08
-Nodes (25): ByteData?, Color, build, _controller, createState, dispose, _noteColors, QuickNoteOverlay (+17 more)
+Cohesion: 0.12
+Nodes (15): ByteData?, channel, main, overlayChannel, List, package:flutter_overlay_window_example/main.dart, package:flutter/services.dart, package:flutter_test/flutter_test.dart (+7 more)
 
 ### Community 24 - "dynamic_island_overlay.dart"
 Cohesion: 0.20
@@ -175,7 +174,7 @@ Nodes (13): Common Skill Categories, Find Skills, How to Help Users Find Skills,
 
 ### Community 35 - "package:flutter/material.dart"
 Cohesion: 0.32
-Nodes (8): HomePage, _HomePageState, MessangerChatHead, _MessangerChatHeadState, OverlayDispatcher, _OverlayDispatcherState, State, StatefulWidget
+Nodes (8): HomePage, _HomePageState, OverlayDispatcher, _OverlayDispatcherState, TextFieldOverlay, _TextFieldOverlayState, State, StatefulWidget
 
 ### Community 36 - "Android Kotlin Core"
 Cohesion: 0.17
@@ -188,10 +187,6 @@ Nodes (11): Android Testing Unit, Anti-Patterns, Done Checklist, Edge case, Exam
 ### Community 38 - "State"
 Cohesion: 0.25
 Nodes (7): build, _counter, createState, DragToDismissOverlay, _DragToDismissOverlayState, package:flutter_overlay_window/flutter_overlay_window.dart, main
-
-### Community 39 - "text_field_overlay.dart"
-Cohesion: 0.20
-Nodes (10): dart:async, dart:developer, build, createState, dispose, initState, _subscription, TextFieldOverlay (+2 more)
 
 ### Community 40 - "Android Kotlin Core Patterns"
 Cohesion: 0.40
@@ -210,8 +205,8 @@ Cohesion: 0.40
 Nodes (4): Android Testing Unit Runnable Scenarios, Edge case, Failure recovery, Happy path
 
 ### Community 49 - "messanger_chathead.dart"
-Cohesion: 0.14
-Nodes (13): build, _buildAvatarBubble, _buildExpandedChat, createState, dispose, initState, _isExpanded, _messages (+5 more)
+Cohesion: 0.13
+Nodes (15): build, _buildAvatarBubble, _buildExpandedChat, createState, dispose, initState, _isExpanded, _messages (+7 more)
 
 ### Community 50 - "package:flutter/material.dart"
 Cohesion: 0.40
@@ -230,7 +225,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `run_examples.sh script`, `run_examples.sh script`, `run_all_tests.sh script` to the rest of the system?**
   _261 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Android Overlay Service` be split into smaller, more focused modules?**
-  _Cohesion score 0.08080808080808081 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08116883116883117 - nodes in this community are weakly interconnected._
 - **Should `Android Plugin Lifecycle & Activity` be split into smaller, more focused modules?**
   _Cohesion score 0.14130434782608695 - nodes in this community are weakly interconnected._
 - **Should `MethodChannel & Notifications Handler` be split into smaller, more focused modules?**
@@ -238,4 +233,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Flutter Plugin Dart API` be split into smaller, more focused modules?**
   _Cohesion score 0.07692307692307693 - nodes in this community are weakly interconnected._
 - **Should `Example Home Page & Isolate Port` be split into smaller, more focused modules?**
-  _Cohesion score 0.09090909090909091 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.049682875264270614 - nodes in this community are weakly interconnected._

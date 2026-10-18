@@ -32,6 +32,7 @@ import android.view.ViewConfiguration
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
+import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
@@ -52,6 +53,7 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 class OverlayService : Service(), View.OnTouchListener {
 
@@ -67,8 +69,10 @@ class OverlayService : Service(), View.OnTouchListener {
     private var flutterView: FlutterView? = null
     private var flutterChannel: MethodChannel? = null
     private var overlayMessageChannel: BasicMessageChannel<Any?>? = null
-    private var dismissView: ImageView? = null
+    private var dismissView: FrameLayout? = null
+    private var dismissTargetView: ImageView? = null
     private val DISMISS_SIZE_DP = 56
+    private val DISMISS_WINDOW_SIZE_DP = 120
     private val DISMISS_BOTTOM_MARGIN_DP = 48
     private val windowSetup = WindowSetup.instance
 
@@ -365,7 +369,7 @@ class OverlayService : Service(), View.OnTouchListener {
         mTrayAnimationTimer = null
         mTrayTimerTask?.cancel()
         mTrayTimerTask = null
-        removeDismissView()
+        removeDismissView(immediate = true)
         if (windowManager != null && flutterView != null) {
             try {
                 windowManager?.removeView(flutterView)
@@ -639,7 +643,11 @@ class OverlayService : Service(), View.OnTouchListener {
 
     private fun createDismissView() {
         if (!windowSetup.enableDismiss || dismissView != null || windowManager == null) return
-        val sizePx = dpToPx(DISMISS_SIZE_DP)
+        val targetSizePx = dpToPx(DISMISS_SIZE_DP)
+        val windowSizePx = dpToPx(DISMISS_WINDOW_SIZE_DP)
+        val centerOffsetFromBottom = dpToPx(DISMISS_BOTTOM_MARGIN_DP + DISMISS_SIZE_DP / 2)
+
+        val container = FrameLayout(this)
         val iv = ImageView(this)
         val customIcon = windowSetup.dismissIcon
         var resolved: Drawable? = null
@@ -661,12 +669,17 @@ class OverlayService : Service(), View.OnTouchListener {
         } else {
             iv.setImageDrawable(
                 DismissDrawable(
-                    size = sizePx,
+                    size = targetSizePx,
                     backgroundColor = windowSetup.dismissBackgroundColor,
                     iconColor = windowSetup.dismissIconColor
                 )
             )
         }
+
+        val lp = FrameLayout.LayoutParams(targetSizePx, targetSizePx).apply {
+            gravity = Gravity.CENTER
+        }
+        container.addView(iv, lp)
 
         val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
@@ -676,8 +689,8 @@ class OverlayService : Service(), View.OnTouchListener {
         }
 
         val dismissParams = WindowManager.LayoutParams(
-            sizePx,
-            sizePx,
+            windowSizePx,
+            windowSizePx,
             layoutType,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
@@ -686,15 +699,16 @@ class OverlayService : Service(), View.OnTouchListener {
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-            y = dpToPx(DISMISS_BOTTOM_MARGIN_DP)
+            y = max(0, centerOffsetFromBottom - (windowSizePx / 2))
         }
 
         iv.scaleX = 0f
         iv.scaleY = 0f
         iv.alpha = 0f
         try {
-            windowManager?.addView(iv, dismissParams)
-            dismissView = iv
+            windowManager?.addView(container, dismissParams)
+            dismissView = container
+            dismissTargetView = iv
             iv.animate()
                 .scaleX(1.0f)
                 .scaleY(1.0f)
@@ -707,51 +721,82 @@ class OverlayService : Service(), View.OnTouchListener {
         }
     }
 
-    private fun updateDismissZoneVisuals(isOver: Boolean) {
-        val view = dismissView ?: return
+    private fun updateDismissProximity(event: MotionEvent) {
+        val target = dismissTargetView ?: return
+        val sizePx = dpToPx(DISMISS_SIZE_DP)
+        val centerOffsetFromBottom = dpToPx(DISMISS_BOTTOM_MARGIN_DP + DISMISS_SIZE_DP / 2)
+        val centerX = szWindow.x / 2f
+        val centerY = szWindow.y.toFloat() - centerOffsetFromBottom
+        val dx = event.rawX - centerX
+        val dy = event.rawY - centerY
+        val distance = sqrt(dx * dx + dy * dy)
+        val dismissRadiusPx = sizePx * 1.15f
+        val proximityThresholdPx = dpToPx(240).toFloat()
+
+        val isOver = distance <= dismissRadiusPx
+
         if (isOver) {
-            view.animate()
-                .scaleX(1.42f)
-                .scaleY(1.42f)
-                .alpha(1.0f)
-                .setDuration(160)
-                .setInterpolator(DecelerateInterpolator())
-                .start()
-            (view.drawable as? DismissDrawable)?.isHovered = true
-            try {
-                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-            } catch (_: Exception) {}
+            if (!isCurrentlyHoveringDismiss) {
+                isCurrentlyHoveringDismiss = true
+                target.animate().cancel()
+                target.animate()
+                    .scaleX(1.45f)
+                    .scaleY(1.45f)
+                    .alpha(1.0f)
+                    .setDuration(140)
+                    .setInterpolator(OvershootInterpolator(1.3f))
+                    .start()
+                (target.drawable as? DismissDrawable)?.isHovered = true
+                try {
+                    target.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                } catch (_: Exception) {}
+            }
         } else {
-            view.animate()
-                .scaleX(1.0f)
-                .scaleY(1.0f)
-                .alpha(0.85f)
-                .setDuration(160)
-                .setInterpolator(DecelerateInterpolator())
-                .start()
-            (view.drawable as? DismissDrawable)?.isHovered = false
+            if (isCurrentlyHoveringDismiss) {
+                isCurrentlyHoveringDismiss = false
+                (target.drawable as? DismissDrawable)?.isHovered = false
+                target.animate().cancel()
+            }
+            // Dynamic proximity zoom effect: scales smoothly from 1.0f up to 1.30f as overlay approaches
+            val progress = ((proximityThresholdPx - distance) / (proximityThresholdPx - dismissRadiusPx)).coerceIn(0f, 1f)
+            val currentScale = 1.0f + 0.30f * progress
+            val currentAlpha = 0.85f + 0.15f * progress
+            target.scaleX = currentScale
+            target.scaleY = currentScale
+            target.alpha = currentAlpha
         }
     }
 
-    private fun removeDismissView() {
-        val view = dismissView ?: return
+    private fun removeDismissView(immediate: Boolean = false) {
+        val container = dismissView ?: return
+        val target = dismissTargetView
         dismissView = null
+        dismissTargetView = null
         isCurrentlyHoveringDismiss = false
+        if (immediate) {
+            try {
+                windowManager?.removeView(container)
+            } catch (_: Exception) {}
+            return
+        }
         try {
-            view.animate()
-                .scaleX(0f)
-                .scaleY(0f)
-                .alpha(0f)
-                .setDuration(150)
-                .withEndAction {
+            target?.animate()?.cancel()
+            target?.animate()
+                ?.scaleX(0f)
+                ?.scaleY(0f)
+                ?.alpha(0f)
+                ?.setDuration(150)
+                ?.withEndAction {
                     try {
-                        windowManager?.removeView(view)
+                        windowManager?.removeView(container)
                     } catch (_: Exception) {}
                 }
-                .start()
+                ?.start() ?: run {
+                windowManager?.removeView(container)
+            }
         } catch (_: Exception) {
             try {
-                windowManager?.removeView(view)
+                windowManager?.removeView(container)
             } catch (_: Exception) {}
         }
     }
@@ -759,11 +804,14 @@ class OverlayService : Service(), View.OnTouchListener {
     private fun isOverDismissZone(event: MotionEvent): Boolean {
         if (dismissView == null) return false
         val sizePx = dpToPx(DISMISS_SIZE_DP)
-        val centerX = szWindow.x / 2
-        val centerY = szWindow.y - dpToPx(DISMISS_BOTTOM_MARGIN_DP) - (sizePx / 2)
-        val touchMargin = (sizePx * 1.35f).toInt()
-        return abs(event.rawX - centerX) < touchMargin &&
-            abs(event.rawY - centerY) < touchMargin
+        val centerOffsetFromBottom = dpToPx(DISMISS_BOTTOM_MARGIN_DP + DISMISS_SIZE_DP / 2)
+        val centerX = szWindow.x / 2f
+        val centerY = szWindow.y.toFloat() - centerOffsetFromBottom
+        val dx = event.rawX - centerX
+        val dy = event.rawY - centerY
+        val distance = sqrt(dx * dx + dy * dy)
+        val dismissRadiusPx = sizePx * 1.15f
+        return distance <= dismissRadiusPx
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -798,11 +846,7 @@ class OverlayService : Service(), View.OnTouchListener {
                 dragging = true
                 if (windowSetup.enableDismiss) {
                     createDismissView()
-                    val isOver = isOverDismissZone(event)
-                    if (isOver != isCurrentlyHoveringDismiss) {
-                        isCurrentlyHoveringDismiss = isOver
-                        updateDismissZoneVisuals(isOver)
-                    }
+                    updateDismissProximity(event)
                 }
                 return true
             }

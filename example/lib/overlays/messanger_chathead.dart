@@ -42,9 +42,9 @@ class _MessangerChatHeadState extends State<MessangerChatHead> {
 
   Future<void> _toggleExpand() async {
     if (_isExpanded) {
-      await FlutterOverlayWindow.resizeOverlay(80, 80, true);
+      await FlutterOverlayWindow.resizeOverlay(96, 96, true);
     } else {
-      await FlutterOverlayWindow.resizeOverlay(320, 380, false);
+      await FlutterOverlayWindow.resizeOverlay(350, 410, false);
     }
     setState(() {
       _isExpanded = !_isExpanded;
@@ -59,8 +59,8 @@ class _MessangerChatHeadState extends State<MessangerChatHead> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeInOut,
-          width: _isExpanded ? 320 : 80,
-          height: _isExpanded ? 380 : 80,
+          width: _isExpanded ? 350 : 96,
+          height: _isExpanded ? 410 : 96,
           child: _isExpanded ? _buildExpandedChat() : _buildAvatarBubble(),
         ),
       ),
@@ -74,8 +74,8 @@ class _MessangerChatHeadState extends State<MessangerChatHead> {
         alignment: Alignment.center,
         children: [
           Container(
-            width: 74,
-            height: 74,
+            width: 68,
+            height: 68,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [Color(0xFF0072FF), Color(0xFF00C6FF)],
@@ -123,6 +123,7 @@ class _MessangerChatHeadState extends State<MessangerChatHead> {
 
   Widget _buildExpandedChat() {
     return Container(
+      margin: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: const Color(0xFF1E222D),
         borderRadius: BorderRadius.circular(24),

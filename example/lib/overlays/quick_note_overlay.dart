@@ -40,6 +40,7 @@ class _QuickNoteOverlayState extends State<QuickNoteOverlay> {
           child: Container(
             width: 320,
             height: 290,
+            margin: const EdgeInsets.all(14),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: _selectedColor,

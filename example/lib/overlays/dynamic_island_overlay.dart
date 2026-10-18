@@ -15,9 +15,9 @@ class _DynamicIslandOverlayState extends State<DynamicIslandOverlay> {
 
   Future<void> _toggleExpand() async {
     if (_isExpanded) {
-      await FlutterOverlayWindow.resizeOverlay(200, 56, true);
+      await FlutterOverlayWindow.resizeOverlay(236, 76, true);
     } else {
-      await FlutterOverlayWindow.resizeOverlay(340, 240, false);
+      await FlutterOverlayWindow.resizeOverlay(356, 256, false);
     }
     setState(() {
       _isExpanded = !_isExpanded;
@@ -32,8 +32,9 @@ class _DynamicIslandOverlayState extends State<DynamicIslandOverlay> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           curve: Curves.easeInOut,
-          width: _isExpanded ? 340 : 200,
-          height: _isExpanded ? 240 : 56,
+          width: _isExpanded ? 320 : 196,
+          height: _isExpanded ? 220 : 48,
+          margin: const EdgeInsets.all(14),
           padding: EdgeInsets.symmetric(
             horizontal: _isExpanded ? 16 : 12,
             vertical: _isExpanded ? 14 : 8,

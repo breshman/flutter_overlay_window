@@ -15,8 +15,8 @@ class _TrueCallerOverlayState extends State<TrueCallerOverlay> {
       color: Colors.transparent,
       child: Center(
         child: Container(
-          width: 340,
-          margin: const EdgeInsets.symmetric(horizontal: 16),
+          width: 320,
+          margin: const EdgeInsets.all(15),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: const LinearGradient(

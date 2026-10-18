@@ -20,6 +20,7 @@ class _DragToDismissOverlayState extends State<DragToDismissOverlay> {
           physics: const NeverScrollableScrollPhysics(),
           child: Container(
             width: 220,
+            margin: const EdgeInsets.all(14),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
