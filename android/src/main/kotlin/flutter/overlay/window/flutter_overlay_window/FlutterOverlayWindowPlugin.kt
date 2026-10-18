@@ -8,7 +8,6 @@ import android.os.Build
 import android.provider.Settings
 import androidx.annotation.NonNull
 import io.flutter.FlutterInjector
-import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.FlutterEngineGroup
 import io.flutter.embedding.engine.dart.DartExecutor
@@ -16,10 +15,10 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.BasicMessageChannel
-import io.flutter.plugin.common.JSONMessageCodec
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
+import io.flutter.plugin.common.StandardMessageCodec
 
 class FlutterOverlayWindowPlugin :
     FlutterPlugin,
@@ -45,7 +44,7 @@ class FlutterOverlayWindowPlugin :
         messenger = BasicMessageChannel(
             flutterPluginBinding.binaryMessenger,
             OverlayConstants.MESSENGER_TAG,
-            JSONMessageCodec.INSTANCE
+            StandardMessageCodec.INSTANCE
         )
         messenger?.setMessageHandler(this)
 
@@ -116,6 +115,16 @@ class FlutterOverlayWindowPlugin :
                         addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         putExtra("startX", startX)
                         putExtra("startY", startY)
+                        putExtra("width", width ?: -1)
+                        putExtra("height", height ?: -1)
+                        putExtra("alignment", alignment ?: "center")
+                        putExtra("flag", flag ?: "flagNotFocusable")
+                        putExtra("overlayTitle", overlayTitle ?: "Overlay is activated")
+                        putExtra("overlayContent", overlayContent ?: "")
+                        putExtra("enableDrag", enableDrag)
+                        putExtra("positionGravity", positionGravity ?: "none")
+                        if (notificationVisibility != null) putExtra("notificationVisibility", notificationVisibility)
+                        if (notificationIcon != null) putExtra("notificationIcon", notificationIcon)
                     }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         ctx.startForegroundService(intent)
@@ -222,7 +231,7 @@ class FlutterOverlayWindowPlugin :
             val overlayMessageChannel = BasicMessageChannel(
                 cachedEngine.dartExecutor,
                 OverlayConstants.MESSENGER_TAG,
-                JSONMessageCodec.INSTANCE
+                StandardMessageCodec.INSTANCE
             )
             overlayMessageChannel.send(message, reply)
         }

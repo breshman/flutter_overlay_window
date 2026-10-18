@@ -8,13 +8,29 @@ import 'package:flutter_overlay_window/src/overlay_config.dart';
 class FlutterOverlayWindow {
   FlutterOverlayWindow._();
 
-  static final StreamController _controller = StreamController();
+  static StreamController<dynamic>? _controller;
   static const MethodChannel _channel =
       MethodChannel("x-slayer/overlay_channel");
   static const MethodChannel _overlayChannel =
       MethodChannel("x-slayer/overlay");
-  static const BasicMessageChannel _overlayMessageChannel =
-      BasicMessageChannel("x-slayer/overlay_messenger", JSONMessageCodec());
+  static const BasicMessageChannel<dynamic> _overlayMessageChannel =
+      BasicMessageChannel<dynamic>(
+    "x-slayer/overlay_messenger",
+    StandardMessageCodec(),
+  );
+
+  static StreamController<dynamic> get _ensureController {
+    if (_controller == null || _controller!.isClosed) {
+      _controller = StreamController<dynamic>.broadcast();
+      _overlayMessageChannel.setMessageHandler((message) async {
+        if (_controller != null && !_controller!.isClosed) {
+          _controller!.add(message);
+        }
+        return message;
+      });
+    }
+    return _controller!;
+  }
 
   /// Open overLay content
   ///
@@ -98,7 +114,7 @@ class FlutterOverlayWindow {
       return await _channel.invokeMethod<bool>('checkPermission') ?? false;
     } on PlatformException catch (error) {
       log("$error");
-      return Future.value(false);
+      return false;
     }
   }
 
@@ -108,7 +124,7 @@ class FlutterOverlayWindow {
     try {
       return await _channel.invokeMethod<bool?>('requestPermission');
     } on PlatformException catch (error) {
-      log("Error requestPermession: $error");
+      log("Error requestPermission: $error");
       rethrow;
     }
   }
@@ -124,13 +140,9 @@ class FlutterOverlayWindow {
     return await _overlayMessageChannel.send(data);
   }
 
-  /// Streams message shared between overlay and main app
+  /// Streams message shared between overlay and main app (broadcast stream)
   static Stream<dynamic> get overlayListener {
-    _overlayMessageChannel.setMessageHandler((message) async {
-      _controller.add(message);
-      return message;
-    });
-    return _controller.stream;
+    return _ensureController.stream;
   }
 
   /// Update the overlay flag while the overlay in action
@@ -186,8 +198,9 @@ class FlutterOverlayWindow {
     return res ?? false;
   }
 
-  /// Dispose overlay stream
+  /// Dispose overlay stream controller
   static void disposeOverlayListener() {
-    _controller.close();
+    _controller?.close();
+    _controller = null;
   }
 }

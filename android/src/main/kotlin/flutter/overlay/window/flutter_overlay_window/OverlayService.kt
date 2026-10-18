@@ -20,7 +20,6 @@ import android.os.IBinder
 import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.Display
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -36,8 +35,8 @@ import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.FlutterEngineGroup
 import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.plugin.common.BasicMessageChannel
-import io.flutter.plugin.common.JSONMessageCodec
 import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.StandardMessageCodec
 import java.util.Timer
 import java.util.TimerTask
 import kotlin.math.abs
@@ -147,7 +146,7 @@ class OverlayService : Service(), View.OnTouchListener {
             overlayMessageChannel = BasicMessageChannel(
                 flutterEngine.dartExecutor,
                 OverlayConstants.MESSENGER_TAG,
-                JSONMessageCodec.INSTANCE
+                StandardMessageCodec.INSTANCE
             )
         }
 
@@ -185,8 +184,30 @@ class OverlayService : Service(), View.OnTouchListener {
             cleanupAndStopSelf()
         }
 
+        // Extract parameters directly from intent extras for self-contained configuration
         val startX = intent.getIntExtra("startX", OverlayConstants.DEFAULT_XY)
         val startY = intent.getIntExtra("startY", OverlayConstants.DEFAULT_XY)
+        val width = intent.getIntExtra("width", windowSetup.width)
+        val height = intent.getIntExtra("height", windowSetup.height)
+        val alignment = intent.getStringExtra("alignment")
+        val flag = intent.getStringExtra("flag")
+        val overlayTitle = intent.getStringExtra("overlayTitle")
+        val overlayContent = intent.getStringExtra("overlayContent")
+        val enableDrag = intent.getBooleanExtra("enableDrag", windowSetup.enableDrag)
+        val positionGravity = intent.getStringExtra("positionGravity")
+        val notificationVisibility = intent.getStringExtra("notificationVisibility")
+        val notificationIcon = intent.getStringExtra("notificationIcon")
+
+        windowSetup.width = width
+        windowSetup.height = height
+        windowSetup.enableDrag = enableDrag
+        if (alignment != null) windowSetup.setGravityFromAlignment(alignment)
+        if (flag != null) windowSetup.setFlag(flag)
+        if (overlayTitle != null) windowSetup.overlayTitle = overlayTitle
+        if (overlayContent != null) windowSetup.overlayContent = overlayContent
+        if (positionGravity != null) windowSetup.positionGravity = positionGravity
+        if (notificationVisibility != null) windowSetup.setNotificationVisibility(notificationVisibility)
+        if (notificationIcon != null) windowSetup.notificationIcon = notificationIcon
 
         isRunning = true
         Log.d("onStartCommand", "Service started")
@@ -208,8 +229,8 @@ class OverlayService : Service(), View.OnTouchListener {
         flutterChannel?.setMethodCallHandler { call, result ->
             when (call.method) {
                 "updateFlag" -> {
-                    val flag: String? = call.argument("flag")
-                    updateOverlayFlag(result, flag)
+                    val newFlag: String? = call.argument("flag")
+                    updateOverlayFlag(result, newFlag)
                 }
                 "updateOverlayPosition" -> {
                     val x: Int = call.argument("x") ?: 0
@@ -217,10 +238,10 @@ class OverlayService : Service(), View.OnTouchListener {
                     moveOverlay(x, y, result)
                 }
                 "resizeOverlay" -> {
-                    val width: Int = call.argument("width") ?: -1
-                    val height: Int = call.argument("height") ?: -1
-                    val enableDrag: Boolean = call.argument("enableDrag") ?: false
-                    resizeOverlay(width, height, enableDrag, result)
+                    val newWidth: Int = call.argument("width") ?: -1
+                    val newHeight: Int = call.argument("height") ?: -1
+                    val newEnableDrag: Boolean = call.argument("enableDrag") ?: false
+                    resizeOverlay(newWidth, newHeight, newEnableDrag, result)
                 }
             }
         }
@@ -231,18 +252,7 @@ class OverlayService : Service(), View.OnTouchListener {
 
         val wm = getSystemService(WINDOW_SERVICE) as WindowManager
         windowManager = wm
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val windowMetrics = wm.currentWindowMetrics
-            val insets = windowMetrics.windowInsets
-            val bounds = windowMetrics.bounds
-            szWindow.set(bounds.width(), bounds.height())
-        } else {
-            val display = wm.defaultDisplay
-            val dm = DisplayMetrics()
-            display.getRealMetrics(dm)
-            szWindow.set(dm.widthPixels, dm.heightPixels)
-        }
+        updateScreenDimensions()
 
         val dx = if (startX == OverlayConstants.DEFAULT_XY) 0 else startX
         val dy = if (startY == OverlayConstants.DEFAULT_XY) -statusBarHeightPx() else startY
@@ -279,6 +289,36 @@ class OverlayService : Service(), View.OnTouchListener {
         return START_STICKY
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        mScreenHeight = -1
+        mStatusBarHeight = -1
+        mNavigationBarHeight = -1
+        updateScreenDimensions()
+
+        val view = flutterView ?: return
+        val wm = windowManager ?: return
+        val params = view.layoutParams as? WindowManager.LayoutParams ?: return
+        constrainToSafeBoundaries(params, view.width, view.height)
+        wm.updateViewLayout(view, params)
+    }
+
+    private fun updateScreenDimensions() {
+        val wm = windowManager ?: return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val windowMetrics = wm.currentWindowMetrics
+            val bounds = windowMetrics.bounds
+            szWindow.set(bounds.width(), bounds.height())
+        } else {
+            @Suppress("DEPRECATION")
+            val display = wm.defaultDisplay
+            val dm = DisplayMetrics()
+            @Suppress("DEPRECATION")
+            display.getRealMetrics(dm)
+            szWindow.set(dm.widthPixels, dm.heightPixels)
+        }
+    }
+
     private fun cleanupAndStopSelf() {
         if (windowManager != null && flutterView != null) {
             windowManager?.removeView(flutterView)
@@ -312,14 +352,11 @@ class OverlayService : Service(), View.OnTouchListener {
 
     private fun screenHeight(): Int {
         if (mScreenHeight == -1) {
-            val wm = windowManager ?: return szWindow.y
-            val display = wm.defaultDisplay
-            val dm = DisplayMetrics()
-            display.getRealMetrics(dm)
+            updateScreenDimensions()
             mScreenHeight = if (inPortrait()) {
-                dm.heightPixels + statusBarHeightPx() + navigationBarHeightPx()
+                szWindow.y + statusBarHeightPx() + navigationBarHeightPx()
             } else {
-                dm.heightPixels + statusBarHeightPx()
+                szWindow.y + statusBarHeightPx()
             }
         }
         return mScreenHeight

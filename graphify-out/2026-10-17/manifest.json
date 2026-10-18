@@ -95,19 +95,19 @@
     "semantic_hash": "d5e764b842ef1331acfb5c6ccd6b1dfd"
   },
   "lib/src/overlay_window.dart": {
-    "mtime": 1792292309.7814279,
-    "ast_hash": "f36178005e51e30ad592a8bce233a964",
+    "mtime": 1792295839.5106742,
+    "ast_hash": "46a76eeb8454255cb5e2fe4e003dabdd",
     "semantic_hash": ""
   },
   "test/flutter_overlay_window_test.dart": {
-    "mtime": 1792292480.8807132,
-    "ast_hash": "f8fd1c7501f339e72ffcca2c5a01b98e",
+    "mtime": 1792295983.9499154,
+    "ast_hash": "02e22aeee739e54f7d140c63db7f922b",
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1792290054.7255576,
-    "ast_hash": "1963d0731f7d0b1151340b380609bdad",
-    "semantic_hash": "1963d0731f7d0b1151340b380609bdad"
+    "mtime": 1792294442.6914616,
+    "ast_hash": "12c6a91a8ae96bc8e60ca5ad7247e0ca",
+    "semantic_hash": ""
   },
   "README.md": {
     "mtime": 1792292819.0316854,
@@ -165,8 +165,8 @@
     "semantic_hash": "57838d52c318faff743130c3fcfae0c6"
   },
   "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/FlutterOverlayWindowPlugin.kt": {
-    "mtime": 1792292219.6039305,
-    "ast_hash": "2a99008024a6387731e28cd789292205",
+    "mtime": 1792295890.5503805,
+    "ast_hash": "85efe416ee313c3c8fdedf65331b3692",
     "semantic_hash": ""
   },
   "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/OverlayConstants.kt": {
@@ -175,8 +175,8 @@
     "semantic_hash": ""
   },
   "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/OverlayService.kt": {
-    "mtime": 1792292252.268928,
-    "ast_hash": "ecf829e349eebeaabe3227ecb7d70e7f",
+    "mtime": 1792295957.3961258,
+    "ast_hash": "c85b8de502dd3b2efadb51f19d91390c",
     "semantic_hash": ""
   },
   "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/WindowSetup.kt": {
@@ -207,6 +207,11 @@
   "example/lib/overlays/quick_note_overlay.dart": {
     "mtime": 1792294218.7264833,
     "ast_hash": "fbb3afa0fe3b07398332f5f061e60a09",
+    "semantic_hash": ""
+  },
+  "test/overlay_models_test.dart": {
+    "mtime": 1792296079.7846265,
+    "ast_hash": "82eb83cdbc079a24108768a53804e8a6",
     "semantic_hash": ""
   }
 }

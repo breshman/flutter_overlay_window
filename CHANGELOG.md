@@ -4,6 +4,10 @@
 - Complete migration of the Android native layer from Java to 100% Kotlin (`FlutterOverlayWindowPlugin.kt`, `OverlayService.kt`, `WindowSetup.kt`, `OverlayConstants.kt`).
 - Adopted the Flutter Built-in Kotlin standard (KGP removed from plugin `build.gradle`), ensuring out-of-the-box compatibility with modern Gradle 8/9 and AGP 8.x/9.x without conflicting with host applications.
 - Unified compiler target to JVM 17 (`compilerOptions.jvmTarget.set(JvmTarget.JVM_17)`).
+- **Broadcast Stream Controller**: Migrated `overlayListener` to a `StreamController.broadcast()`, supporting multiple simultaneous listeners and safe stream resurrection via `disposeOverlayListener()`.
+- **Orientation Auto-Recovery**: Native `OverlayService.onConfigurationChanged` handles device rotation (portrait $\leftrightarrow$ landscape), recalculating window coordinates and dimensions to keep overlays within screen boundaries.
+- **Intent-Based Parameterization**: Decoupled service lifecycle from memory-bound singletons by serializing setup parameters directly into the Android `Intent.extras`.
+- **StandardMessageCodec**: Switched `BasicMessageChannel` encoding to `StandardMessageCodec`, providing high-performance binary serialization for primitive types, maps, lists, and nested payloads.
 
 ### Android 14+ (API 34/35) & Modern Android Support
 - Full support for Android 14+ Foreground Service requirements using `ServiceCompat.startForeground` with `FOREGROUND_SERVICE_TYPE_SPECIAL_USE`.
@@ -11,10 +15,10 @@
 - Removed deprecated `package` attribute from `AndroidManifest.xml` (governed via `namespace` DSL in `build.gradle`).
 - Removed hardcoded AGP dependencies and `rootProject.allprojects` from the plugin's `build.gradle`, resolving repository conflicts (`FAIL_ON_PROJECT_REPOS`) and AGP version collisions when consumed by other apps.
 
-### Dart & Flutter SDK Updates
+### Dart & Flutter SDK Updates & Testing
 - Raised minimum SDK environment constraints to Dart `>=3.0.0 <4.0.0` and Flutter `>=3.16.0`.
 - Upgraded `flutter_lints` to `^4.0.0`.
-- Modernized unit tests with `TestDefaultBinaryMessengerBinding`.
+- Added comprehensive unit test suite (`18/18` passing tests) testing overlay method channels, message channels, models, and enums with `TestDefaultBinaryMessengerBinding`.
 
 ### Example App & Showcase Overlays
 - Upgraded example app to modern Flutter 3.x and Dart 3.x with Material 3 design system.
