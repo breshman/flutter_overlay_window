@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window_example/home_page.dart';
-import 'package:flutter_overlay_window_example/overlays/messanger_chathead.dart';
+import 'package:flutter_overlay_window_example/overlays/overlay_dispatcher.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,24 +13,30 @@ void overlayMain() {
   runApp(
     const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MessangerChatHead(),
+      home: OverlayDispatcher(),
     ),
   );
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      title: 'Flutter Overlay Showcase',
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: const Color(0xFF6366F1),
+        brightness: Brightness.light,
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: const Color(0xFF6366F1),
+        brightness: Brightness.dark,
+      ),
+      home: const HomePage(),
     );
   }
 }

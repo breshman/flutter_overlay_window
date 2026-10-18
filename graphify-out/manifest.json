@@ -1,0 +1,212 @@
+{
+  ".vscode/launch.json": {
+    "mtime": 1792290054.724884,
+    "ast_hash": "d428dad58a907b306653e36a3c30a445",
+    "semantic_hash": "d428dad58a907b306653e36a3c30a445"
+  },
+  ".vscode/settings.json": {
+    "mtime": 1792290054.7250583,
+    "ast_hash": "a88c7b7068c8a307795bf482c39fa6f2",
+    "semantic_hash": "a88c7b7068c8a307795bf482c39fa6f2"
+  },
+  "android/build.gradle": {
+    "mtime": 1792292425.911495,
+    "ast_hash": "1f42cd6edb1f9c007d68ff170cd6bd02",
+    "semantic_hash": ""
+  },
+  "android/gradlew": {
+    "mtime": 1792290054.7286203,
+    "ast_hash": "02c16663c6f0aa37f98d94d698c22b8c",
+    "semantic_hash": "02c16663c6f0aa37f98d94d698c22b8c"
+  },
+  "android/settings.gradle": {
+    "mtime": 1792290054.7289565,
+    "ast_hash": "ac0c3c23cb3a513e2528d7a0b59fac3f",
+    "semantic_hash": "ac0c3c23cb3a513e2528d7a0b59fac3f"
+  },
+  "example/android/app/build.gradle": {
+    "mtime": 1792290054.733476,
+    "ast_hash": "71f73c2e07fe3237b1ed83dac415ab73",
+    "semantic_hash": "71f73c2e07fe3237b1ed83dac415ab73"
+  },
+  "example/android/app/src/main/java/com/example/flutter_overlay_window_example/MainActivity.java": {
+    "mtime": 1792290054.7350376,
+    "ast_hash": "c391ef947fbd18caf79a4f59384b7707",
+    "semantic_hash": "c391ef947fbd18caf79a4f59384b7707"
+  },
+  "example/android/app/src/main/java/flutter/overlay/window/flutter_overlay_window_example/MainActivity.java": {
+    "mtime": 1792290054.735623,
+    "ast_hash": "3389bbced6aef9af6bfe623cafd3e10b",
+    "semantic_hash": "3389bbced6aef9af6bfe623cafd3e10b"
+  },
+  "example/android/build.gradle": {
+    "mtime": 1792290054.739415,
+    "ast_hash": "03a194d62160cf9e348cd4dcad183d08",
+    "semantic_hash": "03a194d62160cf9e348cd4dcad183d08"
+  },
+  "example/android/settings.gradle": {
+    "mtime": 1792290054.7401202,
+    "ast_hash": "dd2373bc97186a11d61a35a86fd53ea7",
+    "semantic_hash": "dd2373bc97186a11d61a35a86fd53ea7"
+  },
+  "example/lib/home_page.dart": {
+    "mtime": 1792294289.8638835,
+    "ast_hash": "007b9b125d8a4eacdd9088c586776ee2",
+    "semantic_hash": ""
+  },
+  "example/lib/main.dart": {
+    "mtime": 1792294157.2733386,
+    "ast_hash": "7d5d8a75e3e0e6ae93ae302c047db276",
+    "semantic_hash": ""
+  },
+  "example/lib/overlays/messanger_chathead.dart": {
+    "mtime": 1792294228.7851195,
+    "ast_hash": "2078bce2c0064140939b3bfa29d3e1e0",
+    "semantic_hash": ""
+  },
+  "example/lib/overlays/text_field_overlay.dart": {
+    "mtime": 1792294198.3773322,
+    "ast_hash": "099651786db2963849132b2ec73156b2",
+    "semantic_hash": ""
+  },
+  "example/lib/overlays/true_caller_overlay.dart": {
+    "mtime": 1792294211.0211892,
+    "ast_hash": "023c5988c40d73a124ef70cef8c22231",
+    "semantic_hash": ""
+  },
+  "example/test/widget_test.dart": {
+    "mtime": 1792290054.742203,
+    "ast_hash": "9479e051df7eda7fe6c21bccf6f494e3",
+    "semantic_hash": "9479e051df7eda7fe6c21bccf6f494e3"
+  },
+  "lib/flutter_overlay_window.dart": {
+    "mtime": 1792290054.742589,
+    "ast_hash": "d4a3de9af64968c9338b33f191aee0cf",
+    "semantic_hash": "d4a3de9af64968c9338b33f191aee0cf"
+  },
+  "lib/src/models/overlay_position.dart": {
+    "mtime": 1792290054.7430694,
+    "ast_hash": "75d2dfd32459603b2d8c0576f5aadeac",
+    "semantic_hash": "75d2dfd32459603b2d8c0576f5aadeac"
+  },
+  "lib/src/overlay_config.dart": {
+    "mtime": 1792290054.7433126,
+    "ast_hash": "d5e764b842ef1331acfb5c6ccd6b1dfd",
+    "semantic_hash": "d5e764b842ef1331acfb5c6ccd6b1dfd"
+  },
+  "lib/src/overlay_window.dart": {
+    "mtime": 1792292309.7814279,
+    "ast_hash": "f36178005e51e30ad592a8bce233a964",
+    "semantic_hash": ""
+  },
+  "test/flutter_overlay_window_test.dart": {
+    "mtime": 1792292480.8807132,
+    "ast_hash": "f8fd1c7501f339e72ffcca2c5a01b98e",
+    "semantic_hash": ""
+  },
+  "CHANGELOG.md": {
+    "mtime": 1792294442.6914616,
+    "ast_hash": "12c6a91a8ae96bc8e60ca5ad7247e0ca",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1792292819.0316854,
+    "ast_hash": "40909dfd85e76da78c1953b97670fcfb",
+    "semantic_hash": ""
+  },
+  "analysis_options.yaml": {
+    "mtime": 1792290100.832326,
+    "ast_hash": "e9cfc9dbb0726afccdb3c4b1a61c3df3",
+    "semantic_hash": "e9cfc9dbb0726afccdb3c4b1a61c3df3"
+  },
+  "example/README.md": {
+    "mtime": 1792290054.73281,
+    "ast_hash": "753f6bbbe3be7a8dce715202772aebf3",
+    "semantic_hash": "753f6bbbe3be7a8dce715202772aebf3"
+  },
+  "example/analysis_options.yaml": {
+    "mtime": 1792290103.7851417,
+    "ast_hash": "63824b28eb8fdba591c3a2a224ea1ba5",
+    "semantic_hash": "63824b28eb8fdba591c3a2a224ea1ba5"
+  },
+  "example/pubspec.yaml": {
+    "mtime": 1792294043.8441951,
+    "ast_hash": "3a48c2cd64d3b5000fb095e4db07a847",
+    "semantic_hash": ""
+  },
+  "pubspec.yaml": {
+    "mtime": 1792294222.7565157,
+    "ast_hash": "80ae4c6cf512bb095eeee478fe9f73e8",
+    "semantic_hash": ""
+  },
+  "example/android/app/src/main/res/mipmap-hdpi/ic_launcher.png": {
+    "mtime": 1792290054.7368665,
+    "ast_hash": "13e9c72ec37fac220397aa819fa1ef2d",
+    "semantic_hash": "13e9c72ec37fac220397aa819fa1ef2d"
+  },
+  "example/android/app/src/main/res/mipmap-mdpi/ic_launcher.png": {
+    "mtime": 1792290054.7371063,
+    "ast_hash": "6270344430679711b81476e29878caa7",
+    "semantic_hash": "6270344430679711b81476e29878caa7"
+  },
+  "example/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png": {
+    "mtime": 1792290054.7373595,
+    "ast_hash": "a0a8db5985280b3679d99a820ae2db79",
+    "semantic_hash": "a0a8db5985280b3679d99a820ae2db79"
+  },
+  "example/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png": {
+    "mtime": 1792290054.7376122,
+    "ast_hash": "afe1b655b9f32da22f9a4301bb8e6ba8",
+    "semantic_hash": "afe1b655b9f32da22f9a4301bb8e6ba8"
+  },
+  "example/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png": {
+    "mtime": 1792290054.7378843,
+    "ast_hash": "57838d52c318faff743130c3fcfae0c6",
+    "semantic_hash": "57838d52c318faff743130c3fcfae0c6"
+  },
+  "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/FlutterOverlayWindowPlugin.kt": {
+    "mtime": 1792292219.6039305,
+    "ast_hash": "2a99008024a6387731e28cd789292205",
+    "semantic_hash": ""
+  },
+  "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/OverlayConstants.kt": {
+    "mtime": 1792292194.6365414,
+    "ast_hash": "e2b2dd723d873603c664a508afb48f44",
+    "semantic_hash": ""
+  },
+  "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/OverlayService.kt": {
+    "mtime": 1792292252.268928,
+    "ast_hash": "ecf829e349eebeaabe3227ecb7d70e7f",
+    "semantic_hash": ""
+  },
+  "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/WindowSetup.kt": {
+    "mtime": 1792292204.1674175,
+    "ast_hash": "4340bf62ebe19b93956675692a49cc65",
+    "semantic_hash": ""
+  },
+  ".agents/rules/graphify.md": {
+    "mtime": 1792290521.4929867,
+    "ast_hash": "f1e53ecc9194573d3c28fc116c743a2e",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/graphify.md": {
+    "mtime": 1792290521.4934268,
+    "ast_hash": "0bc020d491fca99550c1ea3de0a5f862",
+    "semantic_hash": ""
+  },
+  "example/lib/overlays/dynamic_island_overlay.dart": {
+    "mtime": 1792294259.2734423,
+    "ast_hash": "e6b9c50ba076dd5b434973b6d74ab662",
+    "semantic_hash": ""
+  },
+  "example/lib/overlays/overlay_dispatcher.dart": {
+    "mtime": 1792294148.762385,
+    "ast_hash": "c9b869b0b454143173f0ef29a5ab553f",
+    "semantic_hash": ""
+  },
+  "example/lib/overlays/quick_note_overlay.dart": {
+    "mtime": 1792294218.7264833,
+    "ast_hash": "fbb3afa0fe3b07398332f5f061e60a09",
+    "semantic_hash": ""
+  }
+}
