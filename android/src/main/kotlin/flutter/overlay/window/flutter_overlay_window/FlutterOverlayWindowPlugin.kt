@@ -19,6 +19,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.common.StandardMessageCodec
+import androidx.core.net.toUri
 
 class FlutterOverlayWindowPlugin :
     FlutterPlugin,
@@ -71,7 +72,7 @@ class FlutterOverlayWindowPlugin :
                     pendingResult?.success(checkOverlayPermission())
                     pendingResult = result
                     val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
-                        data = Uri.parse("package:${activity.packageName}")
+                        data = "package:${activity.packageName}".toUri()
                     }
                     activity.startActivityForResult(intent, REQUEST_CODE_FOR_OVERLAY_PERMISSION)
                 } else {
