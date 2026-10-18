@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
@@ -16,12 +17,14 @@ class _MessangerChatHeadState extends State<MessangerChatHead> {
     "Everything is running smoothly on Android 14.",
   ];
   final TextEditingController _replyController = TextEditingController();
+  StreamSubscription<dynamic>? _overlaySubscription;
 
   @override
   void initState() {
     super.initState();
-    FlutterOverlayWindow.overlayListener.listen((data) {
+    _overlaySubscription = FlutterOverlayWindow.overlayListener.listen((data) {
       log("Overlay received: $data");
+      if (!mounted) return;
       if (data is String) {
         setState(() {
           _messages.add(data);
@@ -32,6 +35,7 @@ class _MessangerChatHeadState extends State<MessangerChatHead> {
 
   @override
   void dispose() {
+    _overlaySubscription?.cancel();
     _replyController.dispose();
     super.dispose();
   }

@@ -52,13 +52,15 @@ class FlutterOverlayWindow {
   ///
   /// `enableDrag` to enable/disable dragging the overlay over the screen and default is "false"
   ///
-  /// `positionGravity` the overlay postion after drag and default is [PositionGravity.none]
+  /// `enableDismiss` to enable drag-to-dismiss: a dismiss target appears at bottom-center
+  /// during drag; dropping the overlay over it closes the overlay. Default is false.
   ///
-  /// `startPosition` the overlay start position and default is null
+  /// `dismissIcon` the name of a drawable or mipmap resource used as the dismiss zone icon.
+  /// Falls back to a built-in X-in-circle if not set or not found.
   ///
-  /// `notificationIcon` the name of a drawable or mipmap resource in your app
-  /// (e.g. `"ic_stat_overlay"` for `android/app/src/main/res/drawable/ic_stat_overlay.png`)
-  /// used as the notification small icon. Defaults to the app launcher icon.
+  /// `dismissIconColor` color of the X icon in the built-in dismiss zone (supports [Color] or ARGB [int]).
+  ///
+  /// `dismissBackgroundColor` background color of the built-in dismiss circle (supports [Color] or ARGB [int]).
   static Future<void> showOverlay({
     int height = WindowSize.fullCover,
     int width = WindowSize.matchParent,
@@ -68,10 +70,28 @@ class FlutterOverlayWindow {
     String overlayTitle = "overlay activated",
     String? overlayContent,
     bool enableDrag = false,
+    bool enableDismiss = false,
+    dynamic dismissIconColor,
+    dynamic dismissBackgroundColor,
+    String? dismissIcon,
     PositionGravity positionGravity = PositionGravity.none,
     OverlayPosition? startPosition,
     String? notificationIcon,
   }) async {
+    int? resolvedIconColor;
+    if (dismissIconColor is Color) {
+      resolvedIconColor = dismissIconColor.toARGB32();
+    } else if (dismissIconColor is int) {
+      resolvedIconColor = dismissIconColor;
+    }
+
+    int? resolvedBgColor;
+    if (dismissBackgroundColor is Color) {
+      resolvedBgColor = dismissBackgroundColor.toARGB32();
+    } else if (dismissBackgroundColor is int) {
+      resolvedBgColor = dismissBackgroundColor;
+    }
+
     await _channel.invokeMethod(
       'showOverlay',
       {
@@ -82,6 +102,11 @@ class FlutterOverlayWindow {
         "overlayTitle": overlayTitle,
         "overlayContent": overlayContent,
         "enableDrag": enableDrag,
+        "enableDismiss": enableDismiss,
+        if (resolvedIconColor != null) "dismissIconColor": resolvedIconColor,
+        if (resolvedBgColor != null)
+          "dismissBackgroundColor": resolvedBgColor,
+        if (dismissIcon != null) "dismissIcon": dismissIcon,
         "notificationVisibility": visibility.name,
         "positionGravity": positionGravity.name,
         "startPosition": startPosition?.toMap(),

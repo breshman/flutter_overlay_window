@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -11,12 +12,20 @@ class TextFieldOverlay extends StatefulWidget {
 }
 
 class _TextFieldOverlayState extends State<TextFieldOverlay> {
+  StreamSubscription<dynamic>? _subscription;
+
   @override
   void initState() {
     super.initState();
-    FlutterOverlayWindow.overlayListener.listen((event) {
+    _subscription = FlutterOverlayWindow.overlayListener.listen((event) {
       log("$event");
     });
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
   }
 
   @override

@@ -12,8 +12,12 @@ import android.content.pm.ServiceInfo
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.Canvas
+import android.graphics.ColorFilter
+import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.Point
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -25,8 +29,10 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.WindowManager
+import android.widget.ImageView
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat
 import io.flutter.FlutterInjector
 import io.flutter.embedding.android.FlutterTextureView
 import io.flutter.embedding.android.FlutterView
@@ -58,6 +64,9 @@ class OverlayService : Service(), View.OnTouchListener {
     private var flutterView: FlutterView? = null
     private var flutterChannel: MethodChannel? = null
     private var overlayMessageChannel: BasicMessageChannel<Any?>? = null
+    private var dismissView: ImageView? = null
+    private val DISMISS_SIZE_DP = 56
+    private val DISMISS_BOTTOM_MARGIN_DP = 48
     private val windowSetup = WindowSetup.instance
 
     private val clickableFlag = (WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
@@ -180,8 +189,10 @@ class OverlayService : Service(), View.OnTouchListener {
             return START_STICKY
         }
 
-        if (windowManager != null) {
-            cleanupAndStopSelf()
+        // If an overlay view is already running, clean up the previous view smoothly
+        // without terminating the Foreground Service lifecycle.
+        if (flutterView != null || isRunning) {
+            removeCurrentOverlayView()
         }
 
         // Extract parameters directly from intent extras for self-contained configuration
@@ -194,6 +205,18 @@ class OverlayService : Service(), View.OnTouchListener {
         val overlayTitle = intent.getStringExtra("overlayTitle")
         val overlayContent = intent.getStringExtra("overlayContent")
         val enableDrag = intent.getBooleanExtra("enableDrag", windowSetup.enableDrag)
+        val enableDismiss = intent.getBooleanExtra(OverlayConstants.ENABLE_DISMISS, windowSetup.enableDismiss)
+        val dismissIcon = intent.getStringExtra(OverlayConstants.DISMISS_ICON) ?: windowSetup.dismissIcon
+        val dismissIconColor = if (intent.hasExtra(OverlayConstants.DISMISS_ICON_COLOR)) {
+            intent.getIntExtra(OverlayConstants.DISMISS_ICON_COLOR, windowSetup.dismissIconColor)
+        } else {
+            windowSetup.dismissIconColor
+        }
+        val dismissBackgroundColor = if (intent.hasExtra(OverlayConstants.DISMISS_BG_COLOR)) {
+            intent.getIntExtra(OverlayConstants.DISMISS_BG_COLOR, windowSetup.dismissBackgroundColor)
+        } else {
+            windowSetup.dismissBackgroundColor
+        }
         val positionGravity = intent.getStringExtra("positionGravity")
         val notificationVisibility = intent.getStringExtra("notificationVisibility")
         val notificationIcon = intent.getStringExtra("notificationIcon")
@@ -201,6 +224,10 @@ class OverlayService : Service(), View.OnTouchListener {
         windowSetup.width = width
         windowSetup.height = height
         windowSetup.enableDrag = enableDrag
+        windowSetup.enableDismiss = enableDismiss
+        windowSetup.dismissIcon = dismissIcon
+        windowSetup.dismissIconColor = dismissIconColor
+        windowSetup.dismissBackgroundColor = dismissBackgroundColor
         if (alignment != null) windowSetup.setGravityFromAlignment(alignment)
         if (flag != null) windowSetup.setFlag(flag)
         if (overlayTitle != null) windowSetup.overlayTitle = overlayTitle
@@ -291,6 +318,7 @@ class OverlayService : Service(), View.OnTouchListener {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        removeDismissView()
         mScreenHeight = -1
         mStatusBarHeight = -1
         mNavigationBarHeight = -1
@@ -319,30 +347,42 @@ class OverlayService : Service(), View.OnTouchListener {
         }
     }
 
-    private fun cleanupAndStopSelf() {
+    private fun removeCurrentOverlayView() {
+        mTrayAnimationTimer?.cancel()
+        mTrayAnimationTimer = null
+        mTrayTimerTask?.cancel()
+        mTrayTimerTask = null
+        removeDismissView()
         if (windowManager != null && flutterView != null) {
-            windowManager?.removeView(flutterView)
-            flutterView?.detachFromFlutterEngine()
-            windowManager = null
-            flutterView = null
+            try {
+                windowManager?.removeView(flutterView)
+            } catch (e: Exception) {
+                Log.e("OverlayService", "Error removing flutterView", e)
+            }
         }
+        val engine = FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG)
+        if (engine != null && flutterView != null) {
+            try {
+                flutterView?.detachFromFlutterEngine()
+            } catch (e: Exception) {
+                Log.e("OverlayService", "Error detaching Flutter engine", e)
+            }
+        }
+        flutterView = null
+    }
+
+    private fun cleanupAndStopSelf() {
+        removeCurrentOverlayView()
+        windowManager = null
         isRunning = false
+        instance = null
         stopSelf()
     }
 
     override fun onDestroy() {
         Log.d("OverLay", "Destroying the overlay window service")
-        mTrayAnimationTimer?.cancel()
-        mTrayAnimationTimer = null
-        mTrayTimerTask?.cancel()
-        mTrayTimerTask = null
-
-        if (windowManager != null && flutterView != null) {
-            windowManager?.removeView(flutterView)
-            flutterView?.detachFromFlutterEngine()
-            windowManager = null
-            flutterView = null
-        }
+        removeCurrentOverlayView()
+        windowManager = null
         isRunning = false
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
         notificationManager?.cancel(OverlayConstants.NOTIFICATION_ID)
@@ -584,6 +624,86 @@ class OverlayService : Service(), View.OnTouchListener {
         return mResources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
     }
 
+    private fun createDismissView() {
+        if (!windowSetup.enableDismiss || dismissView != null || windowManager == null) return
+        val sizePx = dpToPx(DISMISS_SIZE_DP)
+        val iv = ImageView(this)
+        val customIcon = windowSetup.dismissIcon
+        var resolved: Drawable? = null
+        if (!customIcon.isNullOrEmpty()) {
+            var id = getDrawableResourceId("drawable", customIcon)
+            if (id == 0) {
+                id = getDrawableResourceId("mipmap", customIcon)
+            }
+            if (id != 0) {
+                try {
+                    resolved = ContextCompat.getDrawable(this, id)
+                } catch (e: Exception) {
+                    Log.w("OverlayService", "Failed to resolve custom dismiss icon: $customIcon", e)
+                }
+            }
+        }
+        if (resolved != null) {
+            iv.setImageDrawable(resolved)
+        } else {
+            iv.setImageDrawable(
+                DismissDrawable(
+                    size = sizePx,
+                    backgroundColor = windowSetup.dismissBackgroundColor,
+                    iconColor = windowSetup.dismissIconColor
+                )
+            )
+        }
+
+        val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        } else {
+            @Suppress("DEPRECATION")
+            WindowManager.LayoutParams.TYPE_PHONE
+        }
+
+        val dismissParams = WindowManager.LayoutParams(
+            sizePx,
+            sizePx,
+            layoutType,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+            PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+            y = dpToPx(DISMISS_BOTTOM_MARGIN_DP)
+        }
+
+        try {
+            windowManager?.addView(iv, dismissParams)
+            dismissView = iv
+        } catch (e: Exception) {
+            Log.e("OverlayService", "Error displaying dismiss view", e)
+        }
+    }
+
+    private fun removeDismissView() {
+        val view = dismissView ?: return
+        try {
+            windowManager?.removeView(view)
+        } catch (e: Exception) {
+            Log.e("OverlayService", "Error removing dismiss view", e)
+        }
+        dismissView = null
+    }
+
+    private fun isOverDismissZone(event: MotionEvent): Boolean {
+        if (dismissView == null) return false
+        val sizePx = dpToPx(DISMISS_SIZE_DP)
+        val centerX = szWindow.x / 2
+        val centerY = szWindow.y - dpToPx(DISMISS_BOTTOM_MARGIN_DP) - (sizePx / 2)
+        val touchMargin = (sizePx * 1.35f).toInt()
+        return abs(event.rawX - centerX) < touchMargin &&
+            abs(event.rawY - centerY) < touchMargin
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(view: View, event: MotionEvent): Boolean {
         val wm = windowManager ?: return false
@@ -613,12 +733,22 @@ class OverlayService : Service(), View.OnTouchListener {
                 lastX = event.rawX
                 lastY = event.rawY
                 dragging = true
+                if (windowSetup.enableDismiss) {
+                    createDismissView()
+                }
                 return true
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                lastYPosition = params.y
                 val wasDragging = dragging
+                val wasOverDismiss = dragging && windowSetup.enableDismiss && isOverDismissZone(event)
+                removeDismissView()
+                lastYPosition = params.y
                 dragging = false
+
+                if (wasOverDismiss) {
+                    cleanupAndStopSelf()
+                    return true
+                }
 
                 if (windowSetup.positionGravity == "none") {
                     return wasDragging
@@ -629,6 +759,48 @@ class OverlayService : Service(), View.OnTouchListener {
             }
         }
         return false
+    }
+
+    private class DismissDrawable(
+        private val size: Int,
+        backgroundColor: Int,
+        iconColor: Int
+    ) : Drawable() {
+        private val circlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = backgroundColor
+            style = Paint.Style.FILL
+        }
+        private val xPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = iconColor
+            style = Paint.Style.STROKE
+            strokeWidth = max(size / 13f, 3f)
+            strokeCap = Paint.Cap.ROUND
+        }
+
+        override fun draw(canvas: Canvas) {
+            val cx = size / 2f
+            val cy = size / 2f
+            val radius = size / 2f
+            canvas.drawCircle(cx, cy, radius, circlePaint)
+            val arm = size / 4.8f
+            canvas.drawLine(cx - arm, cy - arm, cx + arm, cy + arm, xPaint)
+            canvas.drawLine(cx + arm, cy - arm, cx - arm, cy + arm, xPaint)
+        }
+
+        override fun setAlpha(alpha: Int) {
+            circlePaint.alpha = alpha
+            xPaint.alpha = alpha
+        }
+
+        override fun setColorFilter(colorFilter: ColorFilter?) {
+            circlePaint.colorFilter = colorFilter
+            xPaint.colorFilter = colorFilter
+        }
+
+        @Deprecated("Deprecated in Java")
+        override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
+        override fun getIntrinsicWidth(): Int = size
+        override fun getIntrinsicHeight(): Int = size
     }
 
     private fun updateOverlayPosition(params: WindowManager.LayoutParams, dx: Float, dy: Float) {

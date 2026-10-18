@@ -104,6 +104,10 @@ void main() {
         overlayTitle: "Test Title",
         overlayContent: "Test Content",
         enableDrag: true,
+        enableDismiss: true,
+        dismissIcon: "ic_trash",
+        dismissIconColor: const Color(0xFFFFFFFF),
+        dismissBackgroundColor: const Color(0xCCE53935),
         positionGravity: PositionGravity.auto,
         startPosition: const OverlayPosition(10, 20),
         notificationIcon: "ic_notification",
@@ -118,9 +122,27 @@ void main() {
       expect(args['overlayTitle'], 'Test Title');
       expect(args['overlayContent'], 'Test Content');
       expect(args['enableDrag'], isTrue);
+      expect(args['enableDismiss'], isTrue);
+      expect(args['dismissIcon'], 'ic_trash');
+      expect(args['dismissIconColor'], 0xFFFFFFFF);
+      expect(args['dismissBackgroundColor'], 0xCCE53935);
       expect(args['positionGravity'], 'auto');
       expect(args['startPosition'], {'x': 10, 'y': 20});
       expect(args['notificationIcon'], 'ic_notification');
+    });
+
+    test('showOverlay handles int colors for dismiss zone', () async {
+      await FlutterOverlayWindow.showOverlay(
+        enableDrag: true,
+        enableDismiss: true,
+        dismissIconColor: 0xFF123456,
+        dismissBackgroundColor: 0x88ABCDEF,
+      );
+
+      final args = channelCalls.last.arguments as Map;
+      expect(args['enableDismiss'], isTrue);
+      expect(args['dismissIconColor'], 0xFF123456);
+      expect(args['dismissBackgroundColor'], 0x88ABCDEF);
     });
 
     test('closeOverlay and isActive status checks', () async {

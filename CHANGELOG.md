@@ -8,6 +8,13 @@
 - **Orientation Auto-Recovery**: Native `OverlayService.onConfigurationChanged` handles device rotation (portrait $\leftrightarrow$ landscape), recalculating window coordinates and dimensions to keep overlays within screen boundaries.
 - **Intent-Based Parameterization**: Decoupled service lifecycle from memory-bound singletons by serializing setup parameters directly into the Android `Intent.extras`.
 - **StandardMessageCodec**: Switched `BasicMessageChannel` encoding to `StandardMessageCodec`, providing high-performance binary serialization for primitive types, maps, lists, and nested payloads.
+- **Drag-to-Dismiss Support**:
+  - Added bottom-center dismiss zone when dragging (`enableDismiss: true`). Dropping the overlay on the dismiss target closes it immediately.
+  - Full customization via `dismissIcon` (drawable/mipmap resource), `dismissIconColor`, and `dismissBackgroundColor` (accepting both `Color` and ARGB `int`).
+  - Custom vector `DismissDrawable` with fallback icon rendering.
+  - Fixed critical bug from community PR #196 where the dismiss view was displayed even when `enableDismiss` was `false`.
+- **Seamless Overlay Override**:
+  - Calling `showOverlay` while an overlay is already active now cleanly detaches and replaces the active view layout without terminating the Foreground Service lifecycle or killing the service via `stopSelf()`.
 
 ### Android 14+ (API 34/35) & Modern Android Support
 - Full support for Android 14+ Foreground Service requirements using `ServiceCompat.startForeground` with `FOREGROUND_SERVICE_TYPE_SPECIAL_USE`.
@@ -18,12 +25,15 @@
 ### Dart & Flutter SDK Updates & Testing
 - Raised minimum SDK environment constraints to Dart `>=3.0.0 <4.0.0` and Flutter `>=3.16.0`.
 - Upgraded `flutter_lints` to `^4.0.0`.
-- Added comprehensive unit test suite (`18/18` passing tests) testing overlay method channels, message channels, models, and enums with `TestDefaultBinaryMessengerBinding`.
+- Added comprehensive Dart unit test suite (`19/19` passing tests) testing overlay method channels, message channels, models, dismiss arguments, and color serializers with `TestDefaultBinaryMessengerBinding`.
+- Added Android native unit test suite (`11/11` passing tests) in Kotlin (`WindowSetupTest.kt`, `OverlayConstantsTest.kt`) testing alignment gravity mapping, window flags, notification visibility, dismiss parameters, and constants via `./gradlew :flutter_overlay_window:testDebugUnitTest`.
 
 ### Example App & Showcase Overlays
 - Upgraded example app to modern Flutter 3.x and Dart 3.x with Material 3 design system.
 - Completely redesigned `HomePage` into an interactive showcase dashboard with live status indicators, permission controls, and bidirectional log viewer.
-- Added 4 brand-new interactive overlay designs:
+- Added interactive **Drag-to-Dismiss Testing Suite** with customizable presets (Red Danger, Neon Cyan, Classic, Custom app icon).
+- Added 5 interactive overlay designs:
+  - **Drag-to-Dismiss Overlay**: Interactive testing overlay showing swipe-down dismiss behavior.
   - **Dynamic Island Capsule**: Live activity style compact pill with expand-to-full media player card and progress slider.
   - **Messenger Chat Head**: Sleek floating circular bubble with unread badge, drag-to-snap physics, and expandable chat card with quick replies.
   - **Quick Note Pad**: Floating sticky note with soft keyboard support using `OverlayFlag.focusPointer` and color palette tags.

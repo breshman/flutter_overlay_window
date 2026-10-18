@@ -28,3 +28,6 @@
 .packages
 build/
 /claude/*
+
+# Graphify cache
+graphify-out/cache/

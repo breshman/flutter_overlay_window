@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "skills": {
+    "android-kotlin-core": {
+      "source": "krutikjain/android-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/android-kotlin-core/SKILL.md",
+      "computedHash": "d9c552a3cb35db956f4d9162f15ffbbcea862451198f38f51d58d3ecd6a0c2dc"
+    },
+    "android-testing-unit": {
+      "source": "krutikjain/android-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/android-testing-unit/SKILL.md",
+      "computedHash": "af15da4211876056aada350e87332a5be51f60fb1eb2423e79a4b8cbde5fbc78"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "computedHash": "b146008599c31057cef1c145774cea5d5afb30e8f43fa802e47a4b461419aaaf"
+    },
+    "flutter-package-development": {
+      "source": "thienqo/flutter-skills",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-package-development/SKILL.md",
+      "computedHash": "a76c2e626ea0ec1a5941679f4a83e1d5a56bdd653801cbb80f8120e933bce583"
+    },
+    "flutter-platform-integration": {
+      "source": "thienqo/flutter-skills",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-platform-integration/SKILL.md",
+      "computedHash": "d1ea790664da7c5c36d7015a022fc19dbf4207abad34bd1b09cb01dd91ece591"
+    },
+    "flutter-testing": {
+      "source": "thienqo/flutter-skills",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-testing/SKILL.md",
+      "computedHash": "436f4f4d53c6e3aacf6e02379597bec93a4492907a4235a95357d4a8471caad9"
+    },
+    "grill-me": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/grill-me/SKILL.md",
+      "computedHash": "9cdbb4b8f7a3aeaef82e6230c9e823500d4a8a1214c726cf342cf9829d34fc7d"
+    }
+  }
+}

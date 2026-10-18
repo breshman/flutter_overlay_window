@@ -92,6 +92,10 @@ class FlutterOverlayWindowPlugin :
                 val notificationVisibility: String? = call.argument("notificationVisibility")
                 val notificationIcon: String? = call.argument("notificationIcon")
                 val enableDrag: Boolean = call.argument("enableDrag") ?: false
+                val enableDismiss: Boolean = call.argument("enableDismiss") ?: false
+                val dismissIcon: String? = call.argument("dismissIcon")
+                val dismissIconColor: Number? = call.argument("dismissIconColor")
+                val dismissBackgroundColor: Number? = call.argument("dismissBackgroundColor")
                 val positionGravity: String? = call.argument("positionGravity")
                 val startPosition: Map<String, Int>? = call.argument("startPosition")
                 val startX = startPosition?.get("x") ?: OverlayConstants.DEFAULT_XY
@@ -100,6 +104,10 @@ class FlutterOverlayWindowPlugin :
                 windowSetup.width = width ?: -1
                 windowSetup.height = height ?: -1
                 windowSetup.enableDrag = enableDrag
+                windowSetup.enableDismiss = enableDismiss
+                windowSetup.dismissIcon = dismissIcon
+                if (dismissIconColor != null) windowSetup.dismissIconColor = dismissIconColor.toInt()
+                if (dismissBackgroundColor != null) windowSetup.dismissBackgroundColor = dismissBackgroundColor.toInt()
                 windowSetup.setGravityFromAlignment(alignment ?: "center")
                 windowSetup.setFlag(flag ?: "flagNotFocusable")
                 windowSetup.overlayTitle = overlayTitle ?: "Overlay is activated"
@@ -122,6 +130,10 @@ class FlutterOverlayWindowPlugin :
                         putExtra("overlayTitle", overlayTitle ?: "Overlay is activated")
                         putExtra("overlayContent", overlayContent ?: "")
                         putExtra("enableDrag", enableDrag)
+                        putExtra(OverlayConstants.ENABLE_DISMISS, enableDismiss)
+                        if (dismissIcon != null) putExtra(OverlayConstants.DISMISS_ICON, dismissIcon)
+                        if (dismissIconColor != null) putExtra(OverlayConstants.DISMISS_ICON_COLOR, dismissIconColor.toInt())
+                        if (dismissBackgroundColor != null) putExtra(OverlayConstants.DISMISS_BG_COLOR, dismissBackgroundColor.toInt())
                         putExtra("positionGravity", positionGravity ?: "none")
                         if (notificationVisibility != null) putExtra("notificationVisibility", notificationVisibility)
                         if (notificationIcon != null) putExtra("notificationIcon", notificationIcon)

@@ -18,6 +18,10 @@ class WindowSetup private constructor() {
     var notificationVisibility: Int = NotificationCompat.VISIBILITY_PRIVATE
     var enableDrag: Boolean = false
     var notificationIcon: String? = null
+    var enableDismiss: Boolean = false
+    var dismissIconColor: Int = 0xFFFFFFFF.toInt()
+    var dismissBackgroundColor: Int = 0xCC333333.toInt()
+    var dismissIcon: String? = null
 
     companion object {
         @JvmStatic

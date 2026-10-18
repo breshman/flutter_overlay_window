@@ -8,4 +8,9 @@ object OverlayConstants {
     const val CHANNEL_ID = "Overlay Channel"
     const val NOTIFICATION_ID = 4579
     const val DEFAULT_XY = -6
+
+    const val ENABLE_DISMISS = "enableDismiss"
+    const val DISMISS_ICON = "dismissIcon"
+    const val DISMISS_ICON_COLOR = "dismissIconColor"
+    const val DISMISS_BG_COLOR = "dismissBackgroundColor"
 }

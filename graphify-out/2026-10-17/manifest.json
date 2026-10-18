@@ -10,8 +10,8 @@
     "semantic_hash": "a88c7b7068c8a307795bf482c39fa6f2"
   },
   "android/build.gradle": {
-    "mtime": 1792292425.911495,
-    "ast_hash": "1f42cd6edb1f9c007d68ff170cd6bd02",
+    "mtime": 1792298022.0338023,
+    "ast_hash": "07bf7ca3c6db5d9c465ca984108ee591",
     "semantic_hash": ""
   },
   "android/gradlew": {
@@ -50,8 +50,8 @@
     "semantic_hash": "dd2373bc97186a11d61a35a86fd53ea7"
   },
   "example/lib/home_page.dart": {
-    "mtime": 1792294289.8638835,
-    "ast_hash": "007b9b125d8a4eacdd9088c586776ee2",
+    "mtime": 1792297674.798729,
+    "ast_hash": "d0700d3293d8a08d2ae3741dc5f418e4",
     "semantic_hash": ""
   },
   "example/lib/main.dart": {
@@ -95,23 +95,23 @@
     "semantic_hash": "d5e764b842ef1331acfb5c6ccd6b1dfd"
   },
   "lib/src/overlay_window.dart": {
-    "mtime": 1792295839.5106742,
-    "ast_hash": "46a76eeb8454255cb5e2fe4e003dabdd",
+    "mtime": 1792297705.0375152,
+    "ast_hash": "137f91c7a59d5066f08c972af095c2ec",
     "semantic_hash": ""
   },
   "test/flutter_overlay_window_test.dart": {
-    "mtime": 1792295983.9499154,
-    "ast_hash": "02e22aeee739e54f7d140c63db7f922b",
+    "mtime": 1792297560.7935455,
+    "ast_hash": "493e063a91bf7c1f3059e649508fa9bf",
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1792294442.6914616,
-    "ast_hash": "12c6a91a8ae96bc8e60ca5ad7247e0ca",
+    "mtime": 1792298162.7897546,
+    "ast_hash": "94dd9dead0c37734092aaae33138d6a6",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1792292819.0316854,
-    "ast_hash": "40909dfd85e76da78c1953b97670fcfb",
+    "mtime": 1792298198.1909678,
+    "ast_hash": "32cc2166dae8d90e9498d7dce0604d39",
     "semantic_hash": ""
   },
   "analysis_options.yaml": {
@@ -165,23 +165,23 @@
     "semantic_hash": "57838d52c318faff743130c3fcfae0c6"
   },
   "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/FlutterOverlayWindowPlugin.kt": {
-    "mtime": 1792295890.5503805,
-    "ast_hash": "85efe416ee313c3c8fdedf65331b3692",
+    "mtime": 1792297262.7980807,
+    "ast_hash": "2c6805abdf88421d660f19fc2d640dae",
     "semantic_hash": ""
   },
   "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/OverlayConstants.kt": {
-    "mtime": 1792292194.6365414,
-    "ast_hash": "e2b2dd723d873603c664a508afb48f44",
+    "mtime": 1792297227.3699458,
+    "ast_hash": "7c0e4d073db0b35baec53da4d02d595d",
     "semantic_hash": ""
   },
   "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/OverlayService.kt": {
-    "mtime": 1792295957.3961258,
-    "ast_hash": "c85b8de502dd3b2efadb51f19d91390c",
+    "mtime": 1792297457.696329,
+    "ast_hash": "1e4892a7419d89f14c5642d801318ecb",
     "semantic_hash": ""
   },
   "android/src/main/kotlin/flutter/overlay/window/flutter_overlay_window/WindowSetup.kt": {
-    "mtime": 1792292204.1674175,
-    "ast_hash": "4340bf62ebe19b93956675692a49cc65",
+    "mtime": 1792297240.1002157,
+    "ast_hash": "9a2c8d4356ce6822a2e8d02fcd05264d",
     "semantic_hash": ""
   },
   ".agents/rules/graphify.md": {
@@ -200,8 +200,8 @@
     "semantic_hash": ""
   },
   "example/lib/overlays/overlay_dispatcher.dart": {
-    "mtime": 1792294148.762385,
-    "ast_hash": "c9b869b0b454143173f0ef29a5ab553f",
+    "mtime": 1792297608.228272,
+    "ast_hash": "b065bf170efcbafe8b4c000bf0f0f949",
     "semantic_hash": ""
   },
   "example/lib/overlays/quick_note_overlay.dart": {
@@ -212,6 +212,186 @@
   "test/overlay_models_test.dart": {
     "mtime": 1792296079.7846265,
     "ast_hash": "82eb83cdbc079a24108768a53804e8a6",
+    "semantic_hash": ""
+  },
+  "example/lib/overlays/drag_to_dismiss_overlay.dart": {
+    "mtime": 1792297587.930253,
+    "ast_hash": "ca9bbb9065cddc978a9332f2e1b63bbc",
+    "semantic_hash": ""
+  },
+  "android/src/test/kotlin/flutter/overlay/window/flutter_overlay_window/OverlayConstantsTest.kt": {
+    "mtime": 1792298052.2377017,
+    "ast_hash": "90ba26d2573b3bdcab143987559d25eb",
+    "semantic_hash": ""
+  },
+  "android/src/test/kotlin/flutter/overlay/window/flutter_overlay_window/WindowSetupTest.kt": {
+    "mtime": 1792298037.3702435,
+    "ast_hash": "8057ae4b24409795f225eadfe9dcb39b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/feature-lifecycle/scripts/run_all_tests.sh": {
+    "mtime": 1792298431.6536787,
+    "ast_hash": "ff128370b684088427028bdb0e64bcff",
+    "semantic_hash": ""
+  },
+  ".agents/rules/architecture-and-quality-gate.md": {
+    "mtime": 1792298413.8958175,
+    "ast_hash": "f5cca8676ae6d0533b3c43f2613db6c1",
+    "semantic_hash": ""
+  },
+  ".agents/skills/feature-lifecycle/SKILL.md": {
+    "mtime": 1792298619.1275358,
+    "ast_hash": "19bd3787e6bd882e2516a3ecf914e0ef",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/verify-and-test.md": {
+    "mtime": 1792298498.1516764,
+    "ast_hash": "b250ad8975bb2432cac0aa5ea439cfef",
+    "semantic_hash": ""
+  },
+  ".agents/skills/android-kotlin-core/scripts/run_examples.sh": {
+    "mtime": 1792299014.5355117,
+    "ast_hash": "6f76027d51e894ec38d0b9fbc02e3440",
+    "semantic_hash": ""
+  },
+  ".agents/skills/android-testing-unit/scripts/run_examples.sh": {
+    "mtime": 1792299014.6824334,
+    "ast_hash": "7467f5fde1ece9351bf0a6cd8ac2fa3a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/flutter-package-development/evals/cases.json": {
+    "mtime": 1792299001.3475769,
+    "ast_hash": "2a403e139b2db2ccaea7f2cf679a286e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/flutter-platform-integration/evals/cases.json": {
+    "mtime": 1792299001.4531841,
+    "ast_hash": "fcdf03ef58d113f25e5bfd3e09fb41da",
+    "semantic_hash": ""
+  },
+  ".agents/skills/flutter-testing/evals/cases.json": {
+    "mtime": 1792299001.5522952,
+    "ast_hash": "9d40287564feb19fe1040b5485620112",
+    "semantic_hash": ""
+  },
+  "skills-lock.json": {
+    "mtime": 1792299057.6082425,
+    "ast_hash": "b2431ed0359a3261055bf1e6d0b2e9d8",
+    "semantic_hash": ""
+  },
+  ".agents/skills/android-kotlin-core/SKILL.md": {
+    "mtime": 1792299014.5349026,
+    "ast_hash": "426d6dc9b5a926750f77b68c14eb6607",
+    "semantic_hash": ""
+  },
+  ".agents/skills/android-kotlin-core/agents/openai.yaml": {
+    "mtime": 1792299014.5354774,
+    "ast_hash": "26b26e49bf7578e8b556e69e1de68d4b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/android-kotlin-core/references/official-links.md": {
+    "mtime": 1792299014.5356321,
+    "ast_hash": "6e24cfdb017ec96d538f1e5e7e2411fc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/android-kotlin-core/references/patterns.md": {
+    "mtime": 1792299014.535563,
+    "ast_hash": "fbd8f441489145ea110b4f0c52c62f36",
+    "semantic_hash": ""
+  },
+  ".agents/skills/android-kotlin-core/references/scenarios.md": {
+    "mtime": 1792299014.536111,
+    "ast_hash": "fd87d56231b10d7d9dd0635d0bde76e8",
+    "semantic_hash": ""
+  },
+  ".agents/skills/android-testing-unit/SKILL.md": {
+    "mtime": 1792299014.6817098,
+    "ast_hash": "fdc74299f3ed39c0c4706c8a5db91348",
+    "semantic_hash": ""
+  },
+  ".agents/skills/android-testing-unit/agents/openai.yaml": {
+    "mtime": 1792299014.6824696,
+    "ast_hash": "571cf9784b3ee0a22ed0b5ef79a0c25c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/android-testing-unit/references/official-links.md": {
+    "mtime": 1792299014.682311,
+    "ast_hash": "1474fb41e36b6bdd5ac760ce92356446",
+    "semantic_hash": ""
+  },
+  ".agents/skills/android-testing-unit/references/patterns.md": {
+    "mtime": 1792299014.6827142,
+    "ast_hash": "97fafceb95d7ce6b125022e43329afe0",
+    "semantic_hash": ""
+  },
+  ".agents/skills/android-testing-unit/references/scenarios.md": {
+    "mtime": 1792299014.68301,
+    "ast_hash": "57ab07916365bd5591b8b546f5e48c64",
+    "semantic_hash": ""
+  },
+  ".agents/skills/find-skills/SKILL.md": {
+    "mtime": 1792299057.6028903,
+    "ast_hash": "62b297abdee9aea84c577ab2e04e1974",
+    "semantic_hash": ""
+  },
+  ".agents/skills/flutter-package-development/SKILL.md": {
+    "mtime": 1792299001.3468285,
+    "ast_hash": "5f5b96b922bdb0b5f74371d0f1d4d01a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/flutter-package-development/references/plugins-and-federation.md": {
+    "mtime": 1792299001.3473525,
+    "ast_hash": "4a9a6d386bd08fcee6349290fa216d0b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/flutter-package-development/references/public-api-and-quality.md": {
+    "mtime": 1792299001.3475394,
+    "ast_hash": "afa992d155b932f4ba34f29bc7f1a3e8",
+    "semantic_hash": ""
+  },
+  ".agents/skills/flutter-package-development/references/publication-readiness.md": {
+    "mtime": 1792299001.347694,
+    "ast_hash": "11daed6f3d0167a440180675749a5670",
+    "semantic_hash": ""
+  },
+  ".agents/skills/flutter-platform-integration/SKILL.md": {
+    "mtime": 1792299001.452807,
+    "ast_hash": "a81d14ce0d3e27e5a76306e0f87de660",
+    "semantic_hash": ""
+  },
+  ".agents/skills/flutter-platform-integration/references/integration-strategy.md": {
+    "mtime": 1792299001.453237,
+    "ast_hash": "9183f67c93dafe036c1b310133503ac0",
+    "semantic_hash": ""
+  },
+  ".agents/skills/flutter-platform-integration/references/plugin-development.md": {
+    "mtime": 1792299001.453282,
+    "ast_hash": "4e42057a62b8abf73d1eb64a883293e5",
+    "semantic_hash": ""
+  },
+  ".agents/skills/flutter-testing/SKILL.md": {
+    "mtime": 1792299001.552013,
+    "ast_hash": "2268bb87cab3bbc3c020a6d57d552819",
+    "semantic_hash": ""
+  },
+  ".agents/skills/flutter-testing/references/determinism-goldens-and-integration.md": {
+    "mtime": 1792299001.5522926,
+    "ast_hash": "6348674416a976053d8bce6f7b598f87",
+    "semantic_hash": ""
+  },
+  ".agents/skills/flutter-testing/references/test-layers-and-doubles.md": {
+    "mtime": 1792299001.5522661,
+    "ast_hash": "eea2f77549f6a3aed047883b74109ff2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/grill-me/SKILL.md": {
+    "mtime": 1792299045.0219262,
+    "ast_hash": "51ba9306293963bb76680d5e41525aea",
+    "semantic_hash": ""
+  },
+  ".agents/skills/grill-me/agents/openai.yaml": {
+    "mtime": 1792299045.0224037,
+    "ast_hash": "aff7b6f7b10220e3b4537c42a2d08917",
     "semantic_hash": ""
   }
 }

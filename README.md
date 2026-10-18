@@ -14,7 +14,7 @@
   </a>
   <img src="https://img.shields.io/badge/Android-14%20%7C%2015%20(API%2034%2F35)-blue" alt="Android 14/15 Ready">
   <img src="https://img.shields.io/badge/Kotlin-100%25-purple" alt="100% Kotlin">
-  <img src="https://img.shields.io/badge/Tests-18%20passing-brightgreen" alt="18 Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-30%20passing-brightgreen" alt="30 Tests Passing">
 </p>
 
 <p align="center">
@@ -26,13 +26,15 @@ A production-ready Flutter plugin for displaying high-performance floating windo
 ## ⚡ What's New in 2.0.0
 
 - **100% Kotlin Migration**: Rewritten entirely from Java to Kotlin (`FlutterOverlayWindowPlugin`, `OverlayService`, `WindowSetup`).
+- **Drag-to-Dismiss Zone**: Bottom-center dismiss target when dragging overlays (`enableDismiss: true`). Drop overlay to close immediately. Fully customizable icon and colors (`Color` or ARGB `int`).
+- **Seamless Overlay Override**: Tapping buttons to change overlay designs now cleanly overrides the active window without killing the Foreground Service or crashing.
 - **Android 14 & 15 Ready**: Full compliance with Foreground Service types (`FOREGROUND_SERVICE_SPECIAL_USE`) and Android 13+ notifications (`POST_NOTIFICATIONS`).
 - **Gradle 8/9 & AGP 8/9 Built-in Kotlin**: Zero conflicts with modern host apps. No hardcoded repository URLs or legacy plugin collisions (`FAIL_ON_PROJECT_REPOS`).
 - **Screen Rotation Auto-Recovery**: Native `onConfigurationChanged` dynamically repositions and bounds overlays during Portrait $\leftrightarrow$ Landscape switches.
 - **Broadcast Stream Controller**: `overlayListener` now uses a broadcast stream supporting multiple listeners and safe stream re-subscription via `disposeOverlayListener()`.
 - **StandardMessageCodec**: High-performance binary serialization for structured two-way communication (Primitives, Maps, Lists, nested payloads).
 - **Decoupled Intent Parameters**: Service configuration is passed via `Intent.extras`, eliminating memory leaks and singleton state coupling.
-- **4 Real-World Showcase Overlays**: Ready-to-use patterns for Dynamic Island, Messenger Chat-Head, Quick Note with Keyboard, and Caller HUD.
+- **5 Real-World Showcase Overlays**: Ready-to-use patterns for Drag-to-Dismiss, Dynamic Island, Messenger Chat-Head, Quick Note with Keyboard, and Caller HUD.
 
 ---
 
@@ -544,6 +546,42 @@ class TrueCallerOverlay extends StatelessWidget {
 
 ---
 
+### 6. Drag-to-Dismiss Zone (Snap & Drop to Close)
+
+Enable a floating dismiss target at the bottom-center of the screen during drag gestures. Dropping the overlay on the dismiss target closes it immediately:
+
+```dart
+// 1. Basic Drag-to-Dismiss (Default X-in-circle icon)
+await FlutterOverlayWindow.showOverlay(
+  width: 120,
+  height: 120,
+  enableDrag: true,
+  enableDismiss: true,
+);
+
+// 2. Custom Colors (Accepts either Flutter Color or ARGB int)
+await FlutterOverlayWindow.showOverlay(
+  width: 120,
+  height: 120,
+  enableDrag: true,
+  enableDismiss: true,
+  dismissBackgroundColor: const Color(0xCCE53935), // Semi-transparent red circle
+  dismissIconColor: Colors.white,                   // White cross icon
+);
+
+// 3. Custom App Drawable Resource
+// Place your icon in android/app/src/main/res/drawable/ or mipmap/
+await FlutterOverlayWindow.showOverlay(
+  width: 120,
+  height: 120,
+  enableDrag: true,
+  enableDismiss: true,
+  dismissIcon: "ic_launcher", // Resource name without extension
+);
+```
+
+---
+
 ## 🔄 Bidirectional Communication
 
 Pass rich structured data back and forth between your main application and the overlay using `shareData` and `overlayListener` (backed by `StandardMessageCodec`):
@@ -626,6 +664,10 @@ On Android, changing the device orientation (Portrait $\leftrightarrow$ Landscap
 | `overlayTitle` | `String` | `"Overlay Name"` | Notification title. |
 | `overlayContent` | `String` | `""` | Notification body content text. |
 | `enableDrag` | `bool` | `false` | Enables drag gesture repositioning. |
+| `enableDismiss` | `bool` | `false` | Shows a dismiss target at bottom-center during drag; dropping on it closes the overlay. |
+| `dismissIconColor` | `Color` / `int?` | `null` | Color of the X icon in the default dismiss target (defaults to white). |
+| `dismissBackgroundColor` | `Color` / `int?` | `null` | Background color of the default dismiss circle (defaults to translucent dark grey). |
+| `dismissIcon` | `String?` | `null` | Name of a custom drawable/mipmap resource to use as the dismiss icon. |
 | `positionGravity` | `PositionGravity` | `PositionGravity.none` | Auto-snap behavior when released after drag. |
 | `startPosition` | `OverlayPosition?` | `null` | Custom initial `(x, y)` position. |
 | `notificationIcon` | `String?` | `null` | Drawable/mipmap icon resource name. |
@@ -647,15 +689,26 @@ On Android, changing the device orientation (Portrait $\leftrightarrow$ Landscap
 
 ---
 
-## 🧪 Unit Testing
+## 🧪 Testing
 
-Run the comprehensive unit test suite:
+### 1. Flutter & Dart Tests (19 tests)
+Run the Flutter test suite:
 
 ```bash
 flutter test
 ```
 
-All 18 tests cover `FlutterOverlayWindow` channels, broadcast stream lifecycle, `OverlayPosition`, `WindowSize`, and enum serialization.
+Covers method channels, broadcast streams, message serialization, and data models.
+
+### 2. Android Native Unit Tests (11 tests)
+Run the Kotlin unit test suite via Gradle:
+
+```bash
+cd example/android
+./gradlew :flutter_overlay_window:testDebugUnitTest
+```
+
+Covers window gravity mapping, layout flags, notification visibility, and dismiss parameters in `WindowSetupTest.kt` and `OverlayConstantsTest.kt`.
 
 ---
 

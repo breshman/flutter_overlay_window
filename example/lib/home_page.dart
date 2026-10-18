@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
@@ -13,19 +14,30 @@ class _HomePageState extends State<HomePage> {
   bool _isOverlayActive = false;
   bool _hasPermission = false;
   String _activeDesignName = "None";
+  bool _dismissEnabled = true;
+  String _dismissPreset = "red"; // "red", "cyan", "classic", "custom_icon"
   final List<String> _activityLogs = [];
+  StreamSubscription<dynamic>? _overlaySubscription;
 
   @override
   void initState() {
     super.initState();
     _checkStatus();
-    FlutterOverlayWindow.overlayListener.listen((data) {
+    _overlaySubscription = FlutterOverlayWindow.overlayListener.listen((data) {
       log("Main app received from overlay: $data");
+      if (!mounted) return;
+      final timeStr = TimeOfDay.now().format(context);
       setState(() {
-        _activityLogs.insert(0, "[${TimeOfDay.now().format(context)}] $data");
+        _activityLogs.insert(0, "[$timeStr] $data");
         if (_activityLogs.length > 20) _activityLogs.removeLast();
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _overlaySubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _checkStatus() async {
@@ -54,6 +66,10 @@ class _HomePageState extends State<HomePage> {
     required int width,
     required int height,
     bool enableDrag = true,
+    bool? enableDismiss,
+    dynamic dismissIconColor,
+    dynamic dismissBackgroundColor,
+    String? dismissIcon,
     PositionGravity positionGravity = PositionGravity.auto,
     OverlayFlag flag = OverlayFlag.defaultFlag,
     String? notificationIcon,
@@ -66,25 +82,27 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    if (await FlutterOverlayWindow.isActive()) {
-      await FlutterOverlayWindow.closeOverlay();
-      await Future.delayed(const Duration(milliseconds: 200));
-    }
+    final wasActive = await FlutterOverlayWindow.isActive();
 
+    // Directly call showOverlay; OverlayService cleanly overrides any active window layout
     await FlutterOverlayWindow.showOverlay(
       width: width,
       height: height,
       alignment: OverlayAlignment.center,
       enableDrag: enableDrag,
+      enableDismiss: enableDismiss ?? _dismissEnabled,
+      dismissIconColor: dismissIconColor,
+      dismissBackgroundColor: dismissBackgroundColor,
+      dismissIcon: dismissIcon,
       positionGravity: positionGravity,
       flag: flag,
       overlayTitle: "Active: $name",
-      overlayContent: "Tap to interact or manage overlay",
+      overlayContent: "Tap to interact or drag to bottom to dismiss",
       visibility: NotificationVisibility.visibilityPublic,
       notificationIcon: notificationIcon,
     );
 
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 150));
     await FlutterOverlayWindow.shareData({"design": designId});
 
     setState(() {
@@ -92,9 +110,46 @@ class _HomePageState extends State<HomePage> {
       _activeDesignName = name;
       _activityLogs.insert(
         0,
-        "[${TimeOfDay.now().format(context)}] Launched overlay '$name'",
+        "[${TimeOfDay.now().format(context)}] ${wasActive ? 'Overrode' : 'Launched'} overlay '$name'",
       );
     });
+  }
+
+  void _launchDismissTestOverlay() {
+    Color? iconColor;
+    Color? bgColor;
+    String? customIcon;
+
+    switch (_dismissPreset) {
+      case "red":
+        bgColor = const Color(0xCCE53935);
+        iconColor = Colors.white;
+        break;
+      case "cyan":
+        bgColor = const Color(0xCC002B36);
+        iconColor = const Color(0xFF00E5FF);
+        break;
+      case "custom_icon":
+        customIcon = "ic_launcher"; // uses android/app/src/main/res mipmap icon
+        break;
+      case "classic":
+      default:
+        // Built-in defaults: translucent dark grey circle with white X
+        break;
+    }
+
+    _launchDesign(
+      designId: "drag_to_dismiss",
+      name: "Drag to Dismiss Test",
+      width: 240,
+      height: 100,
+      enableDrag: true,
+      enableDismiss: _dismissEnabled,
+      dismissIconColor: iconColor,
+      dismissBackgroundColor: bgColor,
+      dismissIcon: customIcon,
+      positionGravity: PositionGravity.auto,
+    );
   }
 
   Future<void> _closeOverlay() async {
@@ -131,6 +186,8 @@ class _HomePageState extends State<HomePage> {
         children: [
           _buildStatusHeader(theme),
           const SizedBox(height: 16),
+          _buildDismissTestingCard(theme),
+          const SizedBox(height: 16),
           const Text(
             "Overlay Designs",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -139,7 +196,7 @@ class _HomePageState extends State<HomePage> {
           _buildDesignCard(
             title: "Messenger Chat Head",
             subtitle: "Expandable floating bubble with unread badge & chat card",
-            badge: "Draggable & Resizable",
+            badge: "Drag-to-Dismiss Ready",
             icon: Icons.chat_bubble_rounded,
             color: const Color(0xFF0072FF),
             onLaunch: () => _launchDesign(
@@ -148,6 +205,9 @@ class _HomePageState extends State<HomePage> {
               width: 80,
               height: 80,
               enableDrag: true,
+              enableDismiss: _dismissEnabled,
+              dismissBackgroundColor: const Color(0xCCE53935),
+              dismissIconColor: Colors.white,
               positionGravity: PositionGravity.auto,
             ),
           ),
@@ -284,6 +344,118 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildDismissTestingCard(ThemeData theme) {
+    return Card(
+      elevation: 0,
+      color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.swipe_down_rounded,
+                    color: Colors.redAccent,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Drag-to-Dismiss Zone",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
+                      Text(
+                        "Shows a dismiss target at bottom-center during drag",
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+                Switch(
+                  value: _dismissEnabled,
+                  onChanged: (val) => setState(() => _dismissEnabled = val),
+                ),
+              ],
+            ),
+            const Divider(height: 24),
+            const Text(
+              "Zone Style & Color Preset:",
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              children: [
+                ChoiceChip(
+                  label: const Text("Red Danger (0xCCE53935)"),
+                  selected: _dismissPreset == "red",
+                  onSelected: (selected) {
+                    if (selected) setState(() => _dismissPreset = "red");
+                  },
+                ),
+                ChoiceChip(
+                  label: const Text("Neon Cyan (0xFF00E5FF)"),
+                  selected: _dismissPreset == "cyan",
+                  onSelected: (selected) {
+                    if (selected) setState(() => _dismissPreset = "cyan");
+                  },
+                ),
+                ChoiceChip(
+                  label: const Text("Classic (Default)"),
+                  selected: _dismissPreset == "classic",
+                  onSelected: (selected) {
+                    if (selected) setState(() => _dismissPreset = "classic");
+                  },
+                ),
+                ChoiceChip(
+                  label: const Text("Custom Icon (ic_launcher)"),
+                  selected: _dismissPreset == "custom_icon",
+                  onSelected: (selected) {
+                    if (selected) setState(() => _dismissPreset = "custom_icon");
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4A00E0),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                icon: const Icon(Icons.play_arrow_rounded, size: 20),
+                label: const Text(
+                  "Launch Drag-to-Dismiss Test Overlay",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                onPressed: _launchDismissTestOverlay,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildDesignCard({
     required String title,
     required String subtitle,
@@ -389,8 +561,22 @@ class _HomePageState extends State<HomePage> {
           label: const Text("Get Position"),
           onPressed: () async {
             final pos = await FlutterOverlayWindow.getOverlayPosition();
+            if (!context.mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Overlay Position: $pos")),
+            );
+          },
+        ),
+        ActionChip(
+          avatar: const Icon(Icons.open_with_rounded, size: 16),
+          label: const Text("Move (100, 200)"),
+          onPressed: () async {
+            await FlutterOverlayWindow.moveOverlay(
+              const OverlayPosition(100, 200),
+            );
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Moved overlay to (100, 200)")),
             );
           },
         ),
